@@ -1,0 +1,2083 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบบันทึกข้อมูลด้านสิ่งแวดล้อม โรงพยาบาลแม่อาย (Version 1.3.0)</title>
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+tailwind.config = {
+    theme: {
+        extend: {
+            fontFamily: { sans: ['Prompt', 'sans-serif'] },
+            colors: {
+                eco: { 50: '#f0fdf4', 100: '#dcfce7', 200: '#bbf7d0', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 800: '#166534', 900: '#14532d' }
+            }
+        }
+    }
+}
+</script>
+<style>
+body { font-family: 'Prompt', sans-serif; -webkit-tap-highlight-color: transparent; }
+.custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+.custom-scroll::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 9999px; }
+.chart-container { position: relative; width: 100%; height: 240px; }
+.chart-container-tall { position: relative; width: 100%; height: 260px; }
+@media (min-width: 640px) { .chart-container { height: 280px; } .chart-container-tall { height: 300px; } }
+
+/* DESIGN SYSTEM: Floating Forest Card */
+.eco-float-card {
+    background: #ffffff;
+    border: 2.5px solid #047857;
+    border-top: 6px solid #064e3b;
+    border-radius: 1.5rem;
+    box-shadow: 0 12px 28px -4px rgba(6, 78, 59, 0.18), 0 5px 14px 2px rgba(6, 78, 59, 0.12);
+    transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.eco-float-card:hover {
+    border-color: #059669;
+    box-shadow: 0 20px 36px -6px rgba(6, 78, 59, 0.26), 0 10px 18px -4px rgba(6, 78, 59, 0.16);
+    transform: translateY(-3px);
+}
+.eco-float-subcard {
+    background: #fcfdfd;
+    border: 2px solid #047857;
+    border-left: 5px solid #064e3b;
+    border-radius: 1.15rem;
+    box-shadow: 0 5px 16px 2px rgba(6, 78, 59, 0.12);
+    transition: all 0.2s ease;
+}
+.eco-float-subcard:hover {
+    border-color: #10b981;
+    box-shadow: 0 8px 20px -3px rgba(6, 78, 59, 0.18);
+    transform: translateY(-1.5px);
+}
+
+/* HIGH-CONTRAST FORM CONTROLS */
+input:not([type="checkbox"]):not([type="radio"]), select, textarea {
+    border-width: 2px !important;
+    border-color: #475569 !important;
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
+}
+input:not([type="checkbox"]):not([type="radio"]):focus, select:focus, textarea:focus {
+    border-color: #047857 !important;
+    outline: none !important;
+    box-shadow: 0 0 0 4px rgba(4, 120, 87, 0.32) !important;
+}
+input[readonly] {
+    background-color: #e2e8f0 !important;
+    border-color: #64748b !important;
+    color: #0f172a !important;
+    font-weight: 600 !important;
+}
+
+/* Specific Border Colors */
+.border-slate-300 { border-color: #334155 !important; border-width: 2px !important; }
+.border-emerald-400, .border-emerald-300 { border-color: #047857 !important; border-width: 2px !important; }
+.border-teal-400, .border-teal-300 { border-color: #0f766e !important; border-width: 2px !important; }
+.border-amber-400, .border-amber-300 { border-color: #b45309 !important; border-width: 2px !important; }
+.border-rose-300, .border-rose-400 { border-color: #be123c !important; border-width: 2px !important; }
+.border-blue-300, .border-blue-400 { border-color: #1d4ed8 !important; border-width: 2px !important; }
+.border-purple-300, .border-purple-400 { border-color: #7e22ce !important; border-width: 2px !important; }
+.border-sky-300, .border-sky-400 { border-color: #0284c7 !important; border-width: 2px !important; }
+.border-indigo-100, .border-indigo-200 { border-color: #4338ca !important; border-width: 2px !important; }
+
+/* Custom Checkbox for HAS */
+.has-radio { width: 1.25rem; height: 1.25rem; accent-color: #047857; cursor: pointer; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
+
+<!-- Header -->
+<header class="bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-700 text-white shadow-lg border-b border-emerald-900/30 sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 py-3.5 sm:py-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-3.5 sm:gap-4">
+                <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-white p-1.5 backdrop-blur-md border border-white/50 flex items-center justify-center shadow-md flex-shrink-0 overflow-hidden shadow-emerald-950/25">
+                    <img id="hospitalLogoImg" src="logo.png" alt="โลโก้โรงพยาบาลแม่อาย" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Seal_of_the_Ministry_of_Public_Health_of_Thailand.svg/240px-Seal_of_the_Ministry_of_Public_Health_of_Thailand.svg.png';">
+                </div>
+                <div>
+                    <div class="flex items-center gap-2.5 flex-wrap">
+                        <span class="bg-emerald-500/35 text-emerald-100 text-xs sm:text-sm px-3 py-0.5 rounded-full border border-emerald-400/40 font-semibold shadow-xs">GREEN & CLEAN Hospital</span>
+                        <span class="bg-amber-400 text-slate-900 text-xs sm:text-sm px-3 py-0.5 rounded-full font-bold shadow-sm tracking-wide flex items-center gap-1">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Version 1.3.0
+                        </span>
+                        <span id="liveClock" class="text-xs sm:text-sm text-emerald-100/90 font-mono hidden md:inline-block"></span>
+                    </div>
+                    <h1 class="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight leading-snug mt-1 text-white drop-shadow-xs">ระบบบันทึกข้อมูลด้านสิ่งแวดล้อม โรงพยาบาลแม่อาย</h1>
+                </div>
+            </div>
+            <div class="bg-emerald-900/50 border border-emerald-400/30 backdrop-blur-md rounded-2xl px-4 py-2.5 text-xs sm:text-sm text-emerald-100 flex items-center gap-3.5 self-start sm:self-auto shadow-sm">
+                <div class="w-10 h-10 rounded-full bg-emerald-600/80 border border-emerald-300/50 flex items-center justify-center font-bold text-white text-sm sm:text-base flex-shrink-0 shadow-inner">จน</div>
+                <div class="leading-snug">
+                    <div class="font-bold text-white text-sm sm:text-base tracking-wide">จัดทำโดย: นายจีรศักดิ์ นวลดี</div>
+                    <div class="text-emerald-200 text-xs sm:text-sm font-medium mt-0.5">นักสาธารณสุขปฏิบัติการ • กลุ่มงานควบคุมโรค</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Quick Action Bar -->
+    <div class="bg-emerald-900/60 border-t border-emerald-600/30 px-4 py-2.5">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-3 overflow-x-auto text-sm sm:text-base">
+            <div class="flex items-center gap-2 text-emerald-50 flex-shrink-0 font-medium">
+                <i data-lucide="map-pin" class="w-4 h-4 sm:w-5 sm:h-5 text-emerald-300 flex-shrink-0"></i>
+                <span class="text-xs sm:text-sm font-semibold">จุดบริการข้อมูลกลาง อนามัยสิ่งแวดล้อมและอาชีวอนามัย</span>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <button onclick="openScanModal()" class="inline-flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold px-3.5 py-2 rounded-xl shadow-sm transition active:scale-95 text-xs sm:text-sm">
+                    <i data-lucide="qr-code" class="w-4 h-4"></i><span>สแกน / แสดงรูป QR Code</span>
+                </button>
+                <button onclick="openResetModal()" class="inline-flex items-center gap-1.5 bg-emerald-700 hover:bg-emerald-600 text-white font-semibold px-3.5 py-2 rounded-xl border border-emerald-400/40 transition text-xs sm:text-sm">
+                    <i data-lucide="settings-2" class="w-4 h-4 text-emerald-200"></i><span>ตั้งค่า / เริ่ม 1 ต.ค. 69</span>
+                </button>
+                <button onclick="exportToCSV()" class="inline-flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white font-medium px-3 py-2 rounded-xl border border-white/25 transition text-xs sm:text-sm">
+                    <i data-lucide="download" class="w-4 h-4"></i><span>ส่งออก CSV</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 py-6 w-full flex-1">
+    <!-- Top KPIs -->
+    <section class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-6">
+        <div class="eco-float-card p-4 flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-600 text-xs sm:text-sm">
+                <span class="font-semibold">ปริมาณใช้น้ำวันนี้</span>
+                <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200"><i data-lucide="droplet" class="w-4 h-4"></i></div>
+            </div>
+            <div class="mt-2"><span id="kpiWater" class="text-xl sm:text-2xl font-bold font-mono text-slate-800">142.5</span><span class="text-xs text-slate-500 font-normal"> ลบ.ม.</span></div>
+            <div class="mt-1 text-[11px] text-emerald-700 flex items-center gap-1 font-semibold"><i data-lucide="trending-down" class="w-3 h-3 text-emerald-600"></i> ปกติ (มิเตอร์ 4 จุด)</div>
+        </div>
+        <div class="eco-float-card p-4 flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-600 text-xs sm:text-sm">
+                <span class="font-semibold">น้ำเสียเข้าระบบวันนี้</span>
+                <div class="w-7 h-7 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center border border-teal-200"><i data-lucide="git-pull-request" class="w-4 h-4"></i></div>
+            </div>
+            <div class="mt-2"><span id="kpiWwtsInflow" class="text-xl sm:text-2xl font-bold font-mono text-teal-800">103.8</span><span class="text-xs text-slate-500 font-normal"> ลบ.ม.</span></div>
+            <div class="mt-1 text-[11px] text-teal-700 flex items-center gap-1 font-semibold"><i data-lucide="clock" class="w-3 h-3 text-teal-600"></i> ปั๊มทำงาน <span id="kpiWwtsHours" class="font-bold">6.5</span> (15.97 ลบ.ม./ชม.)</div>
+        </div>
+        <div class="eco-float-card p-4 flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-600 text-xs sm:text-sm">
+                <span class="font-semibold">คลอรีนคงเหลือ</span>
+                <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200"><i data-lucide="activity" class="w-4 h-4"></i></div>
+            </div>
+            <div class="mt-2"><span id="kpiChlorine" class="text-xl sm:text-2xl font-bold font-mono text-slate-800">0.35</span><span class="text-xs text-slate-500 font-normal"> mg/L</span></div>
+            <div class="mt-1 text-[11px] text-emerald-700 flex items-center gap-1 font-semibold"><i data-lucide="check-circle" class="w-3 h-3 text-emerald-600"></i> เกณฑ์ 0.2-0.5 mg/L</div>
+        </div>
+        <div class="eco-float-card p-4 flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-600 text-xs sm:text-sm">
+                <span class="font-semibold">ขยะติดเชื้อสะสม</span>
+                <div class="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center border border-amber-200"><i data-lucide="trash-2" class="w-4 h-4"></i></div>
+            </div>
+            <div class="mt-2"><span id="kpiInfectious" class="text-xl sm:text-2xl font-bold font-mono text-slate-800">19.4</span><span class="text-xs text-slate-500 font-normal"> กก.</span></div>
+            <div class="mt-1 text-[11px] text-amber-700 flex items-center gap-1 font-semibold"><i data-lucide="clock" class="w-3 h-3 text-amber-600"></i> รอส่งกำจัดตามรอบ</div>
+        </div>
+        <div class="eco-float-card p-4 flex flex-col justify-between">
+            <div class="flex items-center justify-between text-slate-600 text-xs sm:text-sm">
+                <span class="font-semibold">อุบัติการณ์เดือนนี้</span>
+                <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-200"><i data-lucide="shield-check" class="w-4 h-4"></i></div>
+            </div>
+            <div class="mt-2"><span id="kpiAccident" class="text-xl sm:text-2xl font-bold font-mono text-emerald-800">0</span><span class="text-xs text-slate-500 font-normal"> ครั้ง</span></div>
+            <div class="mt-1 text-[11px] text-emerald-700 flex items-center gap-1 font-semibold"><i data-lucide="award" class="w-3 h-3 text-emerald-600"></i> Zero Incident</div>
+        </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <div class="bg-slate-200/80 p-1.5 rounded-2xl flex items-center gap-1.5 overflow-x-auto custom-scroll mb-6 text-sm font-medium">
+        <button onclick="switchCategory('analytics')" id="tabBtn-analytics" class="tab-btn active px-4 py-2.5 rounded-xl flex items-center gap-2 transition whitespace-nowrap bg-white text-emerald-800 shadow-sm"><i data-lucide="bar-chart-3" class="w-4 h-4 text-emerald-600"></i><span> แดชบอร์ดสิ่งแวดล้อมรวม</span></button>
+        <button onclick="switchCategory('waste-exec')" id="tabBtn-waste-exec" class="tab-btn px-4 py-2.5 rounded-xl flex items-center gap-2 transition whitespace-nowrap text-amber-900 bg-amber-100 hover:bg-amber-200 border border-amber-300 font-semibold shadow-xs"><i data-lucide="layout-dashboard" class="w-4 h-4 text-amber-700"></i><span> Dashboard สำหรับผู้บริหาร (10+3 มิติ)</span></button>
+        <button onclick="switchCategory('water')" id="tabBtn-water" class="tab-btn px-4 py-2.5 rounded-xl flex items-center gap-2 transition whitespace-nowrap text-slate-600 hover:text-slate-900"><i data-lucide="gauge" class="w-4 h-4"></i><span>1. ระบบประปา & มิเตอร์</span></button>
+        <button onclick="switchCategory('wwts')" id="tabBtn-wwts" class="tab-btn px-4 py-2.5 rounded-xl flex items-center gap-2 transition whitespace-nowrap text-slate-600 hover:text-slate-900"><i data-lucide="waves" class="w-4 h-4"></i><span>2. บำบัดน้ำเสีย & DO</span></button>
+        <button onclick="switchCategory('waste')" id="tabBtn-waste" class="tab-btn px-4 py-2.5 rounded-xl flex items-center gap-2 transition whitespace-nowrap text-slate-600 hover:text-slate-900"><i data-lucide="trash-2" class="w-4 h-4"></i><span>3. จัดการขยะมูลฝอย (5 ชนิด)</span></button>
+        <button onclick="switchCategory('safety')" id="tabBtn-safety" class="tab-btn px-4 py-2.5 rounded-xl flex items-center gap-2 transition whitespace-nowrap text-slate-600 hover:text-slate-900"><i data-lucide="shield-alert" class="w-4 h-4"></i><span>4. รายงานอุบัติการณ์ความปลอดภัย</span></button>
+        <button onclick="switchCategory('maintenance')" id="tabBtn-maintenance" class="tab-btn px-4 py-2.5 rounded-xl flex items-center gap-2 transition whitespace-nowrap text-slate-600 hover:text-slate-900"><i data-lucide="wrench" class="w-4 h-4"></i><span>5. บันทึกซ่อม & CAPA</span></button>
+        <button onclick="switchCategory('history')" id="tabBtn-history" class="tab-btn px-4 py-2.5 rounded-xl flex items-center gap-2 transition whitespace-nowrap text-slate-600 hover:text-slate-900"><i data-lucide="table" class="w-4 h-4"></i><span>6. ประวัติ & ส่งออก CSV</span></button>
+        <button onclick="switchCategory('ts2')" id="tabBtn-ts2" class="tab-btn px-4 py-2.5 rounded-xl flex items-center gap-2 transition whitespace-nowrap text-slate-600 hover:text-slate-900"><i data-lucide="file-check-2" class="w-4 h-4 text-teal-600"></i><span>7. สรุปรายงาน ทส. ๒</span></button>
+        <button onclick="switchCategory('has')" id="tabBtn-has" class="tab-btn px-4 py-2.5 rounded-xl flex items-center gap-2 transition whitespace-nowrap text-slate-600 hover:text-slate-900"><i data-lucide="clipboard-list" class="w-4 h-4 text-blue-600"></i><span>8. เฝ้าระวัง HAS & อ.11</span></button>
+    </div>
+
+    <!-- TAB 0: Analytics & Graphs Section -->
+    <section id="pane-analytics" class="tab-pane space-y-6">
+        <div class="eco-float-card p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-2 border-emerald-700 shadow-md">
+            <div>
+                <h2 class="font-bold text-slate-900 text-base sm:text-lg flex items-center gap-2"><i data-lucide="trending-up" class="w-5 h-5 text-emerald-700"></i> ศูนย์รวมสถิติและแนวโน้มด้านสิ่งแวดล้อม (Environmental Analytics)</h2>
+                <p class="text-xs text-slate-600 mt-0.5 font-medium">วิเคราะห์ข้อมูลการใช้น้ำ, ประสิทธิภาพบ่อบำบัด, ขยะ 5 ประเภท และสถิติงานซ่อมบำรุง</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Chart 1: Water Trend (Restored Original Style) -->
+            <div class="eco-float-card p-5 flex flex-col justify-between border-2 border-emerald-700 shadow-md">
+                <div class="flex items-center justify-between mb-3 pb-2.5">
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2"><i data-lucide="droplets" class="w-4.5 h-4.5 text-emerald-700"></i> 1. แนวโน้มปริมาณการใช้น้ำประปารายวัน (ลบ.ม.)</h3>
+                        <p class="text-[11px] text-slate-600 font-medium mt-0.5">เปรียบเทียบปริมาณน้ำดิบเข้าโรงกรอง vs เกณฑ์เฝ้าระวังน้ำรั่ว</p>
+                    </div>
+                    <span class="text-[11px] bg-emerald-100 text-emerald-900 px-3 py-1 rounded-xl font-bold border border-emerald-300">ลบ.ม./วัน</span>
+                </div>
+                <div class="chart-container p-2 rounded-2xl border border-slate-300 bg-slate-50/60">
+                    <canvas id="chartWaterTrend"></canvas>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600">
+                    <span>ค่าเฉลี่ยรายวัน: <strong class="text-slate-900 font-mono font-bold text-sm">140.0 ลบ.ม.</strong></span>
+                    <span class="text-emerald-800 flex items-center gap-1 font-bold bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-200">
+                        <i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i> ภายในเกณฑ์ปกติ
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Chart 2: Waste Composition -->
+            <div class="eco-float-card p-5 flex flex-col justify-between border-2 border-emerald-700 shadow-md">
+                <div class="flex items-center justify-between mb-3 pb-2.5">
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2"><i data-lucide="pie-chart" class="w-4.5 h-4.5 text-amber-700"></i> 2. สัดส่วนขยะมูลฝอย 5 ประเภท (กก.)</h3>
+                        <p class="text-[11px] text-slate-600 font-medium">ทั่วไป, รีไซเคิล, อินทรีย์, อันตราย และติดเชื้อ</p>
+                    </div>
+                    <span class="text-[11px] bg-amber-100 text-amber-950 px-3 py-1 rounded-xl font-bold border border-amber-300">สัดส่วน %</span>
+                </div>
+                <div class="chart-container p-2 rounded-2xl border border-slate-300 bg-slate-50/60">
+                    <canvas id="chartWastePie"></canvas>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600">
+                    <span>ขยะติดเชื้อเฉลี่ย: <strong class="text-rose-800 font-mono font-bold">17.6%</strong> | ขยะอันตราย: <strong class="text-amber-800 font-mono font-bold">2.9%</strong></span>
+                    <span class="text-slate-900 font-bold bg-slate-100 px-3 py-1 rounded-lg border border-slate-200">รวม 110.3 กก./วัน</span>
+                </div>
+            </div>
+
+            <!-- Chart 3: Wastewater Treatment Inflow Volume & Quality (Restored Original Style with DO/pH/Cl) -->
+            <div class="eco-float-card p-5 flex flex-col justify-between border-2 border-emerald-700 shadow-md">
+                <div class="flex items-center justify-between mb-3 pb-2.5">
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2"><i data-lucide="waves" class="w-4.5 h-4.5 text-teal-700"></i> 3. ปริมาณน้ำเสียเข้าระบบและคุณภาพน้ำ (Inflow m³ & DO / pH / Cl₂)</h3>
+                        <p class="text-[11px] text-slate-600 font-medium mt-0.5">ปริมาณน้ำเสียคำนวณจาก ชม.ปั๊ม x 15.975 ลบ.ม./ชม. ควบคู่ DO ≥ 2.0 mg/L</p>
+                    </div>
+                    <span class="text-[11px] bg-teal-100 text-teal-950 px-3 py-1 rounded-xl font-bold border border-teal-300">น้ำเสีย & ปัจจัย</span>
+                </div>
+                <div class="chart-container p-2 rounded-2xl border border-slate-300 bg-slate-50/60">
+                    <canvas id="chartWwts"></canvas>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600">
+                    <span class="text-teal-950 font-medium">น้ำเสียเข้าระบบล่าสุด: <strong id="chartInflowNote" class="font-mono text-teal-900 font-bold text-sm">103.8 ลบ.ม.</strong> | DO: <strong class="font-mono font-bold text-emerald-800">2.8 mg/L</strong></span>
+                    <span class="text-emerald-800 flex items-center gap-1 font-bold bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-200">
+                        <i data-lucide="check" class="w-3.5 h-3.5 text-emerald-700"></i> เดินระบบสมบูรณ์
+                    </span>
+                </div>
+            </div>
+
+            <!-- Chart 4: Maintenance Issues -->
+            <div class="eco-float-card p-5 flex flex-col justify-between border-2 border-emerald-700 shadow-md">
+                <div class="flex items-center justify-between mb-3 pb-2.5">
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-sm sm:text-base flex items-center gap-2"><i data-lucide="wrench" class="w-4.5 h-4.5 text-indigo-700"></i> 4. สถิติจุดที่พบปัญหาและงานซ่อมบำรุง (ครั้ง)</h3>
+                        <p class="text-[11px] text-slate-600 font-medium">จำแนกตามระบบสาธารณูปโภคเพื่อวางแผนซ่อมเชิงป้องกัน (PM)</p>
+                    </div>
+                    <span class="text-[11px] bg-indigo-100 text-indigo-950 px-3 py-1 rounded-xl font-bold border border-indigo-300">สถิติปัญหา</span>
+                </div>
+                <div class="chart-container p-2 rounded-2xl border border-slate-300 bg-slate-50/60">
+                    <canvas id="chartMaintBar"></canvas>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-xs text-slate-600">
+                    <span>อัตราแก้ไขเสร็จสิ้น: <strong class="text-indigo-900 font-mono font-bold text-sm">100%</strong></span>
+                    <span class="text-emerald-800 font-bold bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-200">ไม่มีรายการค้างซ่อม</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TAB: EXECUTIVE WASTE MANAGEMENT DASHBOARD (10+3 มิติ) -->
+    <section id="pane-waste-exec" class="tab-pane hidden space-y-6">
+        <div class="eco-float-card bg-gradient-to-r from-emerald-950 via-emerald-900 to-teal-950 text-white p-5 sm:p-6 shadow-lg border border-emerald-600/40 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+                    <span class="bg-amber-400 text-slate-900 font-bold text-xs px-3 py-0.5 rounded-full shadow-xs">EXECUTIVE DASHBOARD</span>
+                    <span class="bg-emerald-500/30 text-emerald-200 text-xs px-2.5 py-0.5 rounded-full border border-emerald-400/30">ENV & SANITATION</span>
+                </div>
+                <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2">🌟 Dashboard สำหรับผู้บริหาร (10+3 มิติ)</h2>
+                <p class="text-xs text-emerald-200/90 mt-1 italic">“บริหารจัดการขยะ ควบคุมน้ำทิ้ง น้ำประปา และสุขาภิบาล เพื่อองค์กรที่ยั่งยืน โรงพยาบาลแม่อาย”</p>
+            </div>
+        </div>
+
+        <!-- 1. WASTE KPI SUMMARY -->
+        <div class="eco-float-card p-5 space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-emerald-100">
+                <h3 class="font-bold text-slate-800 text-sm sm:text-base flex items-center gap-2"><span class="w-6 h-6 rounded-lg bg-emerald-700 text-white flex items-center justify-center text-xs font-bold shadow-xs">1</span> WASTE KPI SUMMARY : ภาพรวมขยะทั้งหมด (โรงพยาบาลแม่อาย)</h3>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                <div class="eco-float-subcard p-3.5 flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-slate-600 text-xs font-medium"><span>ปริมาณขยะทั้งหมด</span><i data-lucide="trash" class="w-4 h-4 text-emerald-700"></i></div>
+                    <div class="mt-2"><span id="execKpiTotal" class="text-xl sm:text-2xl font-bold font-mono text-slate-800">3,309.0</span><span class="text-xs text-slate-500"> กก.</span></div>
+                    <div class="text-[10px] text-emerald-700 mt-1 font-semibold flex items-center gap-0.5"><i data-lucide="trending-down" class="w-3 h-3 text-emerald-600"></i> -8.4% vs เดือนก่อน</div>
+                </div>
+                <div class="eco-float-subcard p-3.5 bg-emerald-50/50 flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-emerald-900 text-xs font-medium"><span>ขยะรีไซเคิล</span><i data-lucide="recycle" class="w-4 h-4 text-emerald-600"></i></div>
+                    <div class="mt-2"><span id="execKpiRecycle" class="text-xl sm:text-2xl font-bold font-mono text-emerald-800">546.0</span><span class="text-xs text-emerald-700">กก.</span></div>
+                    <div class="text-[10px] text-emerald-700 mt-1 font-semibold flex items-center gap-0.5"><i data-lucide="trending-up" class="w-3 h-3"></i> +14.2% คัดแยกเพิ่ม</div>
+                </div>
+                <div class="eco-float-subcard p-3.5 bg-rose-50/40 flex flex-col justify-between border-l-rose-600">
+                    <div class="flex items-center justify-between text-rose-900 text-xs font-medium"><span>ขยะติดเชื้อ (รพ.)</span><i data-lucide="biohazard" class="w-4 h-4 text-rose-600"></i></div>
+                    <div class="mt-2"><span id="execKpiHospInf" class="text-xl sm:text-2xl font-bold font-mono text-rose-800">582.0</span><span class="text-xs text-rose-700">กก.</span></div>
+                    <div class="text-[10px] text-emerald-700 mt-1 font-semibold flex items-center gap-0.5"><i data-lucide="trending-down" class="w-3 h-3"></i> 0.32 กก./เตียง/วัน</div>
+                </div>
+                <div class="eco-float-subcard p-3.5 bg-purple-50/40 flex flex-col justify-between border-l-purple-600">
+                    <div class="flex items-center justify-between text-purple-900 text-xs font-medium"><span>รับฝาก (รพ.สต.)</span><i data-lucide="building" class="w-4 h-4 text-purple-600"></i></div>
+                    <div class="mt-2"><span id="execKpiExtInf" class="text-xl sm:text-2xl font-bold font-mono text-purple-800">306.0</span><span class="text-xs text-purple-700">กก.</span></div>
+                    <div class="text-[10px] text-purple-700 mt-1 font-semibold">เครือข่าย 8 แห่ง</div>
+                </div>
+                <div class="eco-float-subcard p-3.5 bg-amber-50/50 flex flex-col justify-between border-l-amber-600">
+                    <div class="flex items-center justify-between text-amber-950 text-xs font-medium"><span>ค่าใช้จ่ายกำจัดติดเชื้อ</span><i data-lucide="banknote" class="w-4 h-4 text-amber-700"></i></div>
+                    <div class="mt-2"><span id="execKpiCost" class="text-xl sm:text-2xl font-bold font-mono text-amber-900">12,432</span><span class="text-xs text-amber-800">บาท</span></div>
+                    <div class="text-[10px] text-emerald-700 mt-1 font-semibold">@14 บ./กก. (ประหยัดงบ)</div>
+                </div>
+                <div class="eco-float-subcard p-3.5 bg-sky-50/40 flex flex-col justify-between border-l-teal-600">
+                    <div class="flex items-center justify-between text-teal-950 text-xs font-medium"><span>อัตราการรีไซเคิล</span><i data-lucide="percent" class="w-4 h-4 text-teal-600"></i></div>
+                    <div class="mt-2"><span id="execKpiRate" class="text-xl sm:text-2xl font-bold font-mono text-teal-900">16.5%</span><span class="text-xs text-teal-700">เป้า ≥ 15%</span></div>
+                    <div class="text-[10px] text-emerald-700 mt-1 font-semibold flex items-center gap-0.5"><i data-lucide="check" class="w-3 h-3"></i> ผ่านเกณฑ์ GREEN</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- 2. WASTE TREND -->
+            <div class="eco-float-card p-5 flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-2 pb-2 border-b border-emerald-100"><h3 class="font-bold text-slate-800 text-xs sm:text-sm flex items-center gap-2"><span class="w-5 h-5 rounded bg-emerald-700 text-white flex items-center justify-center text-[10px] font-bold">2</span> WASTE TREND: แนวโน้มปริมาณขยะ</h3></div>
+                <div class="chart-container"><canvas id="chartExecTrend"></canvas></div>
+            </div>
+            <!-- 3. WASTE BY TYPE -->
+            <div class="eco-float-card p-5 flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-2 pb-2 border-b border-emerald-100"><h3 class="font-bold text-slate-800 text-xs sm:text-sm flex items-center gap-2"><span class="w-5 h-5 rounded bg-emerald-700 text-white flex items-center justify-center text-[10px] font-bold">3</span> WASTE BY TYPE : ขยะแยกตามประเภท</h3></div>
+                <div class="chart-container"><canvas id="chartExecType"></canvas></div>
+            </div>
+            <!-- 4. WASTE BY AREA -->
+            <div class="eco-float-card p-5 flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-2 pb-2 border-b border-emerald-100"><h3 class="font-bold text-slate-800 text-xs sm:text-sm flex items-center gap-2"><span class="w-5 h-5 rounded bg-emerald-700 text-white flex items-center justify-center text-[10px] font-bold">4</span> WASTE BY AREA : ขยะตามตึก/แผนก</h3></div>
+                <div class="overflow-y-auto custom-scroll max-h-[220px] space-y-2 text-xs">
+                    <div class="p-2 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between"><div><strong class="text-slate-800">ตึกผู้ป่วยใน (IPD ชาย-หญิง)</strong></div><span class="font-mono font-bold text-rose-700">183.3 กก.</span></div>
+                    <div class="p-2 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between"><div><strong class="text-slate-800">อุบัติเหตุฉุกเฉิน (ER)</strong></div><span class="font-mono font-bold text-rose-700">122.2 กก.</span></div>
+                    <div class="p-2 bg-purple-50/70 rounded-xl border border-purple-200 flex items-center justify-between"><div><strong class="text-purple-900">รพ.สต.บ้านมะลิกา (รับฝาก)</strong></div><span class="font-mono font-bold text-purple-800">112.5 กก.</span></div>
+                    <div class="p-2 bg-purple-50/70 rounded-xl border border-purple-200 flex items-center justify-between"><div><strong class="text-purple-900">รพ.สต.ท่าตอน (รับฝาก)</strong></div><span class="font-mono font-bold text-purple-800">98.0 กก.</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- 5. RECYCLING -->
+            <div class="eco-float-card p-5 flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-2 pb-2 border-b border-emerald-100"><h3 class="font-bold text-slate-800 text-xs sm:text-sm flex items-center gap-2"><span class="w-5 h-5 rounded bg-emerald-700 text-white flex items-center justify-center text-[10px] font-bold">5</span> RECYCLING : รีไซเคิล & รายได้</h3></div>
+                <div class="grid grid-cols-2 gap-3 mb-3">
+                    <div class="p-2.5 bg-emerald-50/70 rounded-xl border border-emerald-200"><span class="text-[11px] text-emerald-800 block">ปริมาณรีไซเคิลรวม</span><strong class="text-base text-emerald-950 font-mono">546.0 กก.</strong></div>
+                    <div class="p-2.5 bg-amber-50/70 rounded-xl border border-amber-200"><span class="text-[11px] text-amber-900 block">รายได้สะสม</span><strong class="text-base text-amber-950 font-mono">3,820 บาท</strong></div>
+                </div>
+            </div>
+            <!-- 6. DISPOSAL METHOD -->
+            <div class="eco-float-card p-5 flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-2 pb-2 border-b border-emerald-100"><h3 class="font-bold text-slate-800 text-xs sm:text-sm flex items-center gap-2"><span class="w-5 h-5 rounded bg-emerald-700 text-white flex items-center justify-center text-[10px] font-bold">6</span> DISPOSAL METHOD : วิธีกำจัด</h3></div>
+                <div class="chart-container"><canvas id="chartExecMethod"></canvas></div>
+            </div>
+            <!-- 7. COST ANALYSIS -->
+            <div class="eco-float-card p-5 flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-2 pb-2 border-b border-emerald-100"><h3 class="font-bold text-slate-800 text-xs sm:text-sm flex items-center gap-2"><span class="w-5 h-5 rounded bg-emerald-700 text-white flex items-center justify-center text-[10px] font-bold">7</span> COST ANALYSIS : ต้นทุนกำจัด</h3></div>
+                <div class="space-y-3 my-1">
+                    <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs space-y-1.5">
+                        <div class="flex justify-between text-slate-600"><span>ค่าเผากำจัด รพ. (582 กก.):</span><strong class="font-mono text-slate-800">8,148 บาท</strong></div>
+                        <div class="flex justify-between text-purple-800"><span>ค่าเผากำจัด รพ.สต. (306 กก.):</span><strong class="font-mono text-purple-900">4,284 บาท</strong></div>
+                        <div class="flex justify-between text-emerald-700 border-t border-slate-200 pt-1"><span>หัก: รายได้รีไซเคิล:</span><strong class="font-mono">-3,820 บาท</strong></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- 8. HAZARDOUS CONTROL -->
+            <div class="eco-float-card p-5 flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-2 pb-2 border-b border-emerald-100"><h3 class="font-bold text-slate-800 text-xs sm:text-sm flex items-center gap-2"><span class="w-5 h-5 rounded bg-emerald-700 text-white flex items-center justify-center text-[10px] font-bold">8</span> HAZARDOUS CONTROL</h3></div>
+                <div class="space-y-2.5 text-xs">
+                    <div class="p-3 bg-rose-50/60 rounded-2xl border border-rose-200 flex items-center justify-between">
+                        <div><strong class="text-rose-950 block">อุณหภูมิห้องพักขยะ</strong><span class="text-[10px] text-rose-700">เกณฑ์ควบคุม ≤ 10°C</span></div>
+                        <div class="text-right"><span class="text-lg font-bold font-mono text-rose-800">8.0 °C</span></div>
+                    </div>
+                </div>
+            </div>
+            <!-- 9. ESG -->
+            <div class="eco-float-card p-5 flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-2 pb-2 border-b border-emerald-100"><h3 class="font-bold text-slate-800 text-xs sm:text-sm flex items-center gap-2"><span class="w-5 h-5 rounded bg-emerald-700 text-white flex items-center justify-center text-[10px] font-bold">9</span> ESG & CARBON REDUCTION</h3></div>
+                <div class="p-4 bg-gradient-to-br from-emerald-850 via-emerald-800 to-teal-900 text-white rounded-2xl space-y-3">
+                    <div class="flex items-center justify-between"><div><span class="text-xs text-emerald-200 block">ลดก๊าซเรือนกระจก</span><strong class="text-2xl font-mono font-bold">1,120 kgCO2e</strong></div><i data-lucide="leaf" class="w-6 h-6 text-emerald-300"></i></div>
+                </div>
+            </div>
+            <!-- 10. ALERT & CAPA -->
+            <div class="eco-float-card p-5 flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-2 pb-2 border-b border-emerald-100"><h3 class="font-bold text-slate-800 text-xs sm:text-sm flex items-center gap-2"><span class="w-5 h-5 rounded bg-emerald-700 text-white flex items-center justify-center text-[10px] font-bold">10</span> ALERT & ACTION (CAPA)</h3></div>
+                <div class="overflow-y-auto custom-scroll max-h-[220px] space-y-2 text-xs">
+                    <div class="p-2.5 bg-amber-50/70 border border-amber-200 rounded-xl space-y-1"><div class="flex items-center justify-between"><strong class="text-amber-900">ตรวจพบขยะปนเปื้อน (ER)</strong><span class="text-[10px] bg-amber-200 px-1.5 rounded">เตือน</span></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 11-13. LAB RESULTS (Central Lab) -->
+        <div class="eco-float-card p-5 bg-emerald-50 border-2 border-emerald-700">
+            <h3 class="font-bold text-emerald-900 text-base mb-3 border-b-2 border-emerald-600/30 pb-2 flex items-center gap-2"><i data-lucide="microscope" class="w-5 h-5"></i> 11-13. สถิติผลตรวจวิเคราะห์จากห้องปฏิบัติการ (Central Lab Thai ว-139)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white p-4 rounded-xl border-2 border-emerald-600 shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-emerald-600 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">มิติ 11</div>
+                    <h4 class="font-bold text-sm text-emerald-800 mb-2 mt-2">น้ำทิ้งหลังบำบัด (Effluent)</h4>
+                    <p class="text-xs text-slate-600 leading-relaxed">BOD: <strong class="text-emerald-700">3.00 mg/L</strong> (ดีเยี่ยม)<br>pH: <strong class="text-rose-600">2.98</strong> (กรดจัด - เฝ้าระวัง)<br>คลอรีน: <strong class="text-amber-600">1.72 mg/L</strong> (เกินเกณฑ์)</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border-2 border-emerald-600 shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-emerald-600 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">มิติ 12</div>
+                    <h4 class="font-bold text-sm text-emerald-800 mb-2 mt-2">คุณภาพน้ำประปา รพ.</h4>
+                    <p class="text-xs text-slate-600 leading-relaxed">โลหะหนัก 9 ชนิด: <strong class="text-emerald-700">ปลอดภัยทั้งหมด</strong><br>E.coli: <strong class="text-emerald-700">ไม่พบ</strong><br>ความใส: <strong class="text-emerald-700">ใสสะอาดมาก (<1 NTU)</strong></p>
+                </div>
+                <div class="bg-white p-4 rounded-xl border-2 border-emerald-600 shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-emerald-600 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg">มิติ 13</div>
+                    <h4 class="font-bold text-sm text-emerald-800 mb-2 mt-2">ความปลอดภัยชีวภาพ</h4>
+                    <p class="text-xs text-slate-600 leading-relaxed">ไข่หนอนพยาธิ: <strong class="text-emerald-700">ไม่พบ 100%</strong><br>เชื้อ E.coli ในกากตะกอน: <strong class="text-emerald-700">7.4 MPN/g</strong> (ผ่านเกณฑ์ สธ.)</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TAB 1: Water & Meter Section -->
+    <section id="pane-water" class="tab-pane hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 eco-float-card p-5 sm:p-6 border-2 border-emerald-700 shadow-md">
+                <div class="flex items-center justify-between pb-4 mb-4 border-b-2 border-emerald-600/30">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center border-2 border-emerald-600 shadow-xs"><i data-lucide="droplet" class="w-6 h-6"></i></div>
+                        <div>
+                            <h2 class="font-bold text-slate-900 text-base sm:text-lg">บันทึกเลขมิเตอร์และการใช้น้ำประจำวัน</h2>
+                            <p class="text-xs text-slate-600 font-medium">โรงกรองน้ำประปาและระบบจ่ายน้ำ รพ.แม่อาย</p>
+                        </div>
+                    </div>
+                </div>
+                <form id="waterForm" onsubmit="handleWaterSubmit(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">จุดติดตั้งมิเตอร์น้ำ / อาคาร</label>
+                            <select id="waterMeterSelect" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-900">
+                                <option value="M-01">M-01: มิเตอร์น้ำดิบเข้าโรงกรอง</option>
+                                <option value="M-02">M-02: มิเตอร์ส่งจ่ายน้ำประปารวม</option>
+                                <option value="M-03">M-03: มิเตอร์อาคารผู้ป่วยนอก (OPD)</option>
+                                <option value="M-04">M-04: มิเตอร์อาคารสนับสนุน / ซักฟอก</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">วันที่บันทึก *</label>
+                            <input type="date" id="waterDate" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold text-slate-900" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">เวลาที่บันทึก *</label>
+                            <input type="time" id="waterTime" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold text-slate-900" value="08:30" required>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-emerald-50/40 p-4 rounded-2xl border-2 border-emerald-700 shadow-sm">
+                        <div class="bg-white p-3 rounded-xl border-2 border-slate-400">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">เลขมิเตอร์ครั้งก่อนหน้า (ลบ.ม.)</label>
+                            <input type="number" id="waterPrev" class="w-full bg-slate-100 border-2 border-slate-400 rounded-lg px-3 py-2 text-base font-mono font-bold text-slate-800 cursor-not-allowed" readonly value="14250.0">
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border-2 border-emerald-600 shadow-xs">
+                            <label class="block text-xs font-bold text-emerald-950 mb-1">เลขมิเตอร์ที่อ่านได้วันนี้ (ลบ.ม.) *</label>
+                            <input type="number" step="0.1" id="waterCurrent" class="w-full bg-white border-2 border-emerald-600 rounded-lg px-3 py-2 text-base font-mono font-extrabold text-emerald-950" required>
+                        </div>
+                    </div>
+
+                    <!-- Water Quality -->
+                    <div class="bg-teal-50/40 p-4 rounded-2xl border-2 border-teal-600 space-y-3 shadow-xs">
+                        <h3 class="text-xs font-bold text-teal-950 uppercase tracking-wider flex items-center gap-2"><i data-lucide="sliders" class="w-4 h-4 text-teal-700"></i> คุณภาพน้ำประปาหน้างาน (Water Quality Check)</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300">
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">คลอรีนอิสระคงเหลือปลายท่อ (mg/L)</label>
+                                <input type="number" step="0.05" id="waterChlorine" class="w-full bg-white border-2 border-slate-600 rounded-lg px-3 py-1.5 text-sm font-mono font-bold text-slate-900" value="0.35">
+                                <span class="text-[10px] text-slate-500 mt-0.5 block">เกณฑ์มาตรฐาน 0.2 - 0.5</span>
+                            </div>
+                            <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300">
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">ค่าความเป็นกรด-ด่าง (pH)</label>
+                                <input type="number" step="0.1" id="waterPh" class="w-full bg-white border-2 border-slate-600 rounded-lg px-3 py-1.5 text-sm font-mono font-bold text-slate-900" value="7.2">
+                            </div>
+                            <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300">
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">จุดตรวจวัด</label>
+                                <input type="text" id="waterTestPoint" class="w-full bg-white border-2 border-slate-600 rounded-lg px-3 py-1.5 text-sm font-bold text-slate-900" value="ก๊อกน้ำ OPD">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Independent Chemical Usage -->
+                    <div class="bg-sky-50/70 p-4 rounded-2xl border-2 border-sky-600 space-y-3 shadow-xs">
+                        <div class="flex items-center justify-between pb-1.5 border-b-2 border-sky-600/30">
+                            <div class="text-xs font-bold text-sky-950 flex items-center gap-1.5"><i data-lucide="flask-conical" class="w-4 h-4 text-sky-700"></i> สารเคมีที่ใช้ในระบบผลิตน้ำประปา (บันทึกรายสัปดาห์ / ตามจริง)</div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <!-- Alum Box -->
+                            <div class="bg-white p-3.5 rounded-xl border-2 border-sky-400 transition-all" id="alumBox">
+                                <label class="flex items-center gap-2 cursor-pointer mb-3">
+                                    <input type="checkbox" id="chkAlum" onchange="toggleChemical('alum')" class="w-5 h-5 text-sky-600 border-2 border-slate-400 rounded">
+                                    <span class="text-sm font-bold text-sky-950">มีการเติมสารส้ม (Alum) ในวันนี้</span>
+                                </label>
+                                <div id="alumFields" class="space-y-2 opacity-40 pointer-events-none transition-opacity">
+                                    <div><label class="block text-[11px] font-bold text-slate-700">วันที่เติมสารส้ม</label><input type="date" id="dateAlum" class="w-full border-2 border-slate-300 rounded-lg px-3 py-1.5 text-sm font-semibold"></div>
+                                    <div><label class="block text-[11px] font-bold text-slate-700">ปริมาณที่เติม (กก.)</label><input type="number" step="0.5" id="valAlum" class="w-full border-2 border-slate-400 rounded-lg px-3 py-1.5 text-sm font-mono font-bold" placeholder="0.0"></div>
+                                </div>
+                            </div>
+                            <!-- Chlorine Box -->
+                            <div class="bg-white p-3.5 rounded-xl border-2 border-sky-400 transition-all" id="chlorineBox">
+                                <label class="flex items-center gap-2 cursor-pointer mb-3">
+                                    <input type="checkbox" id="chkChlorineWater" onchange="toggleChemical('chlorine')" class="w-5 h-5 text-sky-600 border-2 border-slate-400 rounded">
+                                    <span class="text-sm font-bold text-sky-950">มีการเติมคลอรีนประปาในวันนี้</span>
+                                </label>
+                                <div id="chlorineFields" class="space-y-2 opacity-40 pointer-events-none transition-opacity">
+                                    <div><label class="block text-[11px] font-bold text-slate-700">วันที่เติมคลอรีน</label><input type="date" id="dateChlorineWater" class="w-full border-2 border-slate-300 rounded-lg px-3 py-1.5 text-sm font-semibold"></div>
+                                    <div><label class="block text-[11px] font-bold text-slate-700">ปริมาณที่เติม (กก./ลิตร)</label><input type="number" step="0.5" id="valChlorineWater" class="w-full border-2 border-slate-400 rounded-lg px-3 py-1.5 text-sm font-mono font-bold" placeholder="0.0"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Up to 5 Image Uploads -->
+                    <div class="bg-slate-100 p-4 rounded-2xl border-2 border-slate-300 space-y-2">
+                        <label class="block text-xs font-bold text-slate-700 flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4 text-emerald-700"></i> แนบภาพถ่ายหลักฐานหน้างาน (แนบได้ไม่เกิน 5 ภาพ)</label>
+                        <input type="file" accept="image/*" multiple id="waterImageFile" onchange="handleMultipleImages(this, 'waterImgPreview', 'water')" class="w-full text-xs text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-700 file:text-white hover:file:bg-emerald-800 cursor-pointer">
+                        <div id="waterImgPreview" class="hidden mt-2 flex flex-wrap gap-2"></div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 border-2 border-emerald-900 text-base">
+                        <i data-lucide="save" class="w-5 h-5"></i><span>บันทึกข้อมูลมิเตอร์และประปา</span>
+                    </button>
+                </form>
+            </div>
+            <div class="space-y-4">
+                <div class="eco-float-card bg-gradient-to-br from-emerald-950 via-emerald-900 to-slate-900 text-white p-5 rounded-2xl shadow-lg border-2 border-emerald-500">
+                    <h3 class="font-bold text-base text-emerald-50 mb-3">การควบคุมคุณภาพน้ำประปา รพ.</h3>
+                    <ul class="space-y-2.5 text-xs text-emerald-100/95 leading-relaxed">
+                        <li class="flex items-start gap-2.5"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i><span><strong>คลอรีนคงเหลือปลายท่อ:</strong> ≥ 0.2 mg/L</span></li>
+                        <li class="flex items-start gap-2.5"><i data-lucide="check" class="w-4 h-4 text-emerald-400"></i><span><strong>ค่า pH มาตรฐาน:</strong> 6.5 - 8.5</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TAB 2: Wastewater Treatment Section -->
+    <section id="pane-wwts" class="tab-pane hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 eco-float-card p-5 sm:p-6 border-2 border-teal-700 shadow-md">
+                <div class="flex items-center justify-between pb-4 mb-4 border-b-2 border-teal-600/30">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-xl bg-teal-100 text-teal-800 flex items-center justify-center border-2 border-teal-600 shadow-xs"><i data-lucide="waves" class="w-6 h-6"></i></div>
+                        <div>
+                            <h2 class="font-bold text-slate-900 text-base sm:text-lg">บันทึกการเดินระบบบำบัดน้ำเสียประจำวัน</h2>
+                            <p class="text-xs text-slate-600 font-medium">ระบบตะกอนเร่ง (Activated Sludge) / บ่อเติมอากาศ รพ.แม่อาย</p>
+                        </div>
+                    </div>
+                    <span class="text-xs bg-teal-100 text-teal-900 font-bold px-3 py-1.5 rounded-xl border-2 border-teal-600 shadow-xs">ควบคุมมลพิษ</span>
+                </div>
+                <form id="wwtsForm" onsubmit="handleWwtsSubmit(event)" class="space-y-4">
+                    <div class="mb-4">
+                        <label class="flex items-center justify-between text-xs font-bold text-slate-700 mb-1.5">
+                            <span>วันที่ตรวจประเมิน</span>
+                            <span class="text-[10px] text-teal-700 font-bold bg-teal-50 px-2 py-0.5 rounded border border-teal-300"> ย้อนหลังได้ไม่เกิน 15 วัน</span>
+                        </label>
+                        <input type="date" id="wwtsDate" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold text-slate-900" required>
+                    </div>
+
+                    <!-- Inflow Pump Meter Box -->
+                    <div class="bg-teal-50/40 p-4 rounded-2xl border-2 border-teal-600 space-y-3 shadow-xs">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-1.5 border-b-2 border-teal-600/30">
+                            <div class="font-bold text-xs text-teal-950 flex items-center gap-1.5">
+                                <i data-lucide="timer" class="w-4 h-4 text-teal-700"></i> บันทึกชั่วโมงการทำงานปั๊มสูบน้ำเสียเข้าสู่ระบบ (Inflow Pump Meter)
+                            </div>
+                            <span class="text-[11px] bg-white text-teal-900 px-2.5 py-0.5 rounded-full font-bold border-2 border-teal-400 shadow-sm self-start sm:self-auto">
+                                อัตราสูบ: 15.975 ลบ.ม./ชม.
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="bg-white p-3 rounded-xl border-2 border-slate-400">
+                                <label class="block text-xs font-bold text-slate-700 mb-1">เลขมิเตอร์ชั่วโมงครั้งก่อน (ชม.)</label>
+                                <input type="number" step="0.1" id="wwtsPumpPrev" class="w-full bg-slate-100 border-2 border-slate-400 rounded-lg px-3 py-2 text-base font-mono font-bold text-slate-800 cursor-not-allowed" readonly value="2140.0">
+                            </div>
+                            <div class="bg-white p-3 rounded-xl border-2 border-teal-600 shadow-xs">
+                                <label class="block text-xs font-bold text-teal-950 mb-1">เลขมิเตอร์ชั่วโมงที่อ่านได้วันนี้ (ชม.) *</label>
+                                <input type="number" step="0.1" id="wwtsPumpToday" oninput="calculateWwtsInflow()" class="w-full bg-white border-2 border-teal-600 rounded-lg px-3 py-2 text-base font-mono font-extrabold text-teal-950" placeholder="กรอกตัวเลขชั่วโมงหน้าปัด" required>
+                            </div>
+                        </div>
+                        <div id="wwtsCalcBox" class="hidden mt-2 p-3 rounded-xl border-2 flex items-center justify-between bg-teal-50 border-teal-400 text-teal-900 transition shadow-sm font-medium">
+                            <div id="wwtsCalcLabel" class="text-xs font-bold"></div>
+                            <div id="wwtsCalcValue" class="text-lg font-extrabold font-mono"></div>
+                        </div>
+                    </div>
+
+                    <!-- Electricity Meter Box -->
+                    <div class="bg-amber-50/40 p-4 rounded-2xl border-2 border-amber-400 space-y-3 shadow-xs">
+                        <div class="flex items-center justify-between pb-1.5 border-b-2 border-amber-400/30">
+                            <div class="font-bold text-xs text-amber-950 flex items-center gap-1.5">
+                                <i data-lucide="zap" class="w-4 h-4 text-amber-600"></i> บันทึกเลขมิเตอร์ไฟฟ้าของระบบบำบัดน้ำเสีย (สำหรับรายงาน ทส.๒)
+                            </div>
+                            <span class="text-[11px] bg-white text-amber-900 px-2.5 py-0.5 rounded-full font-bold border-2 border-amber-400 shadow-sm">
+                                หน่วย (kWh)
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="bg-white p-3 rounded-xl border-2 border-slate-400">
+                                <label class="block text-xs font-bold text-slate-700 mb-1">เลขมิเตอร์ไฟฟ้าครั้งก่อน (หน่วย)</label>
+                                <input type="number" step="0.1" id="wwtsElectricPrev" class="w-full bg-slate-100 border-2 border-slate-400 rounded-lg px-3 py-2 text-base font-mono font-bold text-slate-800 cursor-not-allowed" readonly value="8540.0">
+                            </div>
+                            <div class="bg-white p-3 rounded-xl border-2 border-amber-500 shadow-xs">
+                                <label class="block text-xs font-bold text-amber-950 mb-1">เลขมิเตอร์ไฟฟ้าที่อ่านได้วันนี้ (หน่วย) *</label>
+                                <input type="number" step="0.1" id="wwtsElectricToday" oninput="calculateWwtsElectricity()" class="w-full bg-white border-2 border-amber-500 rounded-lg px-3 py-2 text-base font-mono font-extrabold text-amber-950" placeholder="กรอกเลขมิเตอร์ไฟหน้าตู้" required>
+                            </div>
+                        </div>
+                        <div id="wwtsElectricBox" class="hidden mt-2 p-3 rounded-xl border-2 flex items-center justify-between bg-amber-50 border-amber-400 text-amber-900 transition shadow-sm font-medium">
+                            <div class="text-xs font-bold">ปริมาณการใช้ไฟฟ้าวันนี้:</div>
+                            <div id="wwtsElectricVal" class="text-lg font-extrabold font-mono"></div>
+                        </div>
+                    </div>
+
+                    <!-- Parameters Box -->
+                    <div class="bg-slate-50/80 p-4 rounded-2xl border-2 border-slate-400 space-y-3 shadow-xs">
+                        <div class="font-bold text-xs text-slate-800 flex items-center gap-1.5 pb-1.5 border-b-2 border-slate-300">
+                            <i data-lucide="gauge" class="w-4 h-4 text-slate-600"></i> พารามิเตอร์บ่อเติมอากาศและบ่อฆ่าเชื้อน้ำทิ้ง
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                            <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300">
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">ออกซิเจนละลายน้ำ (DO: mg/L) *</label>
+                                <input type="number" step="0.1" id="wwtsDo" class="w-full bg-white border-2 border-slate-600 rounded-lg px-3 py-1.5 text-sm font-mono font-bold text-slate-900" value="2.8" required>
+                            </div>
+                            <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300">
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">ตกตะกอน 30 นาที (SV30: %)</label>
+                                <input type="number" id="wwtsSv30" class="w-full bg-white border-2 border-slate-600 rounded-lg px-3 py-1.5 text-sm font-mono font-bold text-slate-900" value="32">
+                            </div>
+                            <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300">
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">pH บ่อน้ำทิ้งระบายออก</label>
+                                <input type="number" step="0.1" id="wwtsPh" class="w-full bg-white border-2 border-slate-600 rounded-lg px-3 py-1.5 text-sm font-mono font-bold text-slate-900" value="7.4">
+                            </div>
+                            <div class="bg-white p-2.5 rounded-xl border-2 border-teal-500 shadow-xs">
+                                <label class="block text-[11px] font-bold text-teal-900 mb-1">คลอรีนอิสระน้ำทิ้ง (mg/L) *</label>
+                                <input type="number" step="0.05" id="wwtsChlorineEffluent" class="w-full bg-white border-2 border-teal-600 rounded-lg px-3 py-1.5 text-sm font-mono font-extrabold text-teal-900" value="0.50" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Independent Chemical Log WWTS -->
+                    <div class="bg-indigo-50/70 p-4 rounded-2xl border-2 border-indigo-400 transition-all shadow-xs" id="chlorineWwtsBox">
+                        <label class="flex items-center gap-2 cursor-pointer mb-3">
+                            <input type="checkbox" id="chkChlorineWwts" onchange="toggleWwtsChemical()" class="w-5 h-5 text-indigo-600 border-2 border-slate-400 rounded">
+                            <span class="text-sm font-bold text-indigo-950">🧪 มีการเติมคลอรีนฆ่าเชื้อน้ำเสียในวันนี้</span>
+                        </label>
+                        <div id="chlorineWwtsFields" class="grid grid-cols-1 sm:grid-cols-2 gap-3 opacity-40 pointer-events-none transition-opacity">
+                            <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[11px] font-bold text-slate-700 mb-1">วันที่เติมคลอรีนน้ำเสีย</label><input type="date" id="dateChlorineWwts" class="w-full bg-white border-2 border-slate-600 rounded-lg px-3 py-1.5 text-sm font-semibold"></div>
+                            <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[11px] font-bold text-slate-700 mb-1">ปริมาณที่เติม (ลิตร/กก.)</label><input type="number" step="0.5" id="valChlorineWwts" class="w-full bg-white border-2 border-slate-600 rounded-lg px-3 py-1.5 text-sm font-mono font-bold" placeholder="0.0"></div>
+                        </div>
+                    </div>
+
+                    <!-- Up to 5 Image Uploads -->
+                    <div class="bg-slate-100 p-4 rounded-2xl border-2 border-slate-300 space-y-2">
+                        <label class="block text-xs font-bold text-slate-700 flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4 text-teal-700"></i> แนบภาพถ่ายหลักฐานหน้างาน (แนบได้ไม่เกิน 5 ภาพ)</label>
+                        <input type="file" accept="image/*" multiple id="wwtsImageFile" onchange="handleMultipleImages(this, 'wwtsImgPreview', 'wwts')" class="w-full text-xs text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-teal-700 file:text-white hover:file:bg-teal-800 cursor-pointer">
+                        <div id="wwtsImgPreview" class="hidden mt-2 flex flex-wrap gap-2"></div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 border-2 border-teal-900 text-base">
+                        <i data-lucide="save" class="w-5 h-5"></i><span>บันทึกข้อมูลระบบบำบัดน้ำเสีย</span>
+                    </button>
+                </form>
+            </div>
+            <!-- Info Sidebar -->
+            <div class="space-y-4">
+                <div class="eco-float-card bg-gradient-to-br from-teal-950 via-teal-900 to-slate-900 text-white p-5 rounded-2xl shadow-lg border-2 border-teal-500">
+                    <h3 class="font-bold text-base text-teal-50 mb-3">เกณฑ์ควบคุมระบบบำบัด</h3>
+                    <ul class="space-y-2.5 text-xs text-teal-100/95 leading-relaxed">
+                        <li class="flex items-start gap-2.5"><i data-lucide="check" class="w-4 h-4 text-teal-400"></i><span><strong>DO บ่อเติมอากาศ:</strong> ≥ 2.0 mg/L</span></li>
+                        <li class="flex items-start gap-2.5"><i data-lucide="check" class="w-4 h-4 text-teal-400"></i><span><strong>คลอรีนน้ำทิ้ง:</strong> 0.2 - 1.0 mg/L</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TAB 3: Waste Management Section -->
+    <section id="pane-waste" class="tab-pane hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 eco-float-card p-5 sm:p-6 border-2 border-amber-600 shadow-md">
+                <div class="flex items-center justify-between pb-4 mb-4 border-b-2 border-amber-600/30">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center border-2 border-amber-600 shadow-xs"><i data-lucide="scale" class="w-6 h-6"></i></div>
+                        <div>
+                            <h2 class="font-bold text-slate-900 text-base sm:text-lg">บันทึกน้ำหนักขยะมูลฝอยประจำวัน (5 ประเภท)</h2>
+                            <p class="text-xs text-slate-600 font-medium">คัดแยกขยะตามเกณฑ์ GREEN & CLEAN Hospital และระเบียบ สธ.</p>
+                        </div>
+                    </div>
+                </div>
+                <form id="wasteForm" onsubmit="handleWasteSubmit(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="text-xs font-bold text-slate-700">วันที่ชั่งน้ำหนักขยะหลัก</label>
+                            </div>
+                            <input type="date" id="wasteDate" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold text-slate-900" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">อุณหภูมิห้องเก็บพักขยะติดเชื้อ (°C)</label>
+                            <input type="number" step="0.5" id="wasteTemp" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2 text-sm font-mono font-bold text-slate-900" placeholder="เกณฑ์ควบคุม ≤ 10°C" value="8.0">
+                        </div>
+                    </div>
+
+                    <!-- Category 1: Daily Waste -->
+                    <div>
+                        <span class="text-xs font-bold text-slate-800 uppercase tracking-wider block mb-2 pb-1 border-b-2 border-slate-200">๑. ขยะมูลฝอยทั่วไปและขยะอันตรายทั่วไป (บันทึกรายวัน)</span>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div class="bg-blue-50/60 p-3 rounded-xl border-2 border-blue-400">
+                                <div class="text-xs font-bold text-blue-900 mb-1 flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> ขยะทั่วไป</div>
+                                <input type="number" step="0.1" id="wGeneral" oninput="calcWasteTotal()" class="w-full bg-white border-2 border-blue-500 rounded-lg p-2 text-sm font-mono font-bold" value="45.5">
+                                <span class="text-[10px] text-blue-800 mt-1 block font-semibold">หน่วย: กก.</span>
+                            </div>
+                            <div class="bg-green-50/60 p-3 rounded-xl border-2 border-green-400">
+                                <div class="text-xs font-bold text-green-900 mb-1 flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-green-600"></span> อินทรีย์/เศษอาหาร</div>
+                                <input type="number" step="0.1" id="wOrganic" oninput="calcWasteTotal()" class="w-full bg-white border-2 border-green-600 rounded-lg p-2 text-sm font-mono font-bold" value="24.0">
+                                <span class="text-[10px] text-green-800 mt-1 block font-semibold">หน่วย: กก.</span>
+                            </div>
+                            <div class="bg-amber-50/80 p-3 rounded-xl border-2 border-amber-400">
+                                <div class="text-xs font-bold text-amber-900 mb-1 flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> ขยะอันตรายทั่วไป *</div>
+                                <input type="number" step="0.1" id="wHazardous" oninput="calcWasteTotal()" class="w-full bg-white border-2 border-amber-500 rounded-lg p-2 text-sm font-mono font-bold text-amber-900" value="3.2" required>
+                                <span class="text-[10px] text-amber-800 mt-1 block font-semibold">หลอดไฟ/เคมี/ถ่าน</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category 2: Recycle Independent Section -->
+                    <div class="bg-emerald-50/70 p-4 rounded-2xl border-2 border-emerald-400 transition-all shadow-xs" id="recycleBox">
+                        <label class="flex items-center justify-between cursor-pointer mb-3">
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" id="chkRecycle" onchange="toggleWasteSection('recycle')" class="w-5 h-5 text-emerald-600 border-2 border-slate-400 rounded">
+                                <span class="text-sm font-bold text-emerald-950">♻️ บันทึกการจำหน่ายขยะรีไซเคิล (แยกตามรอบที่นำไปขาย)</span>
+                            </div>
+                        </label>
+                        <div id="box_recycle" class="grid grid-cols-1 sm:grid-cols-3 gap-3 opacity-40 pointer-events-none transition-opacity">
+                            <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[11px] font-bold text-slate-700 mb-1">วันที่ขายรีไซเคิล</label><input type="date" id="dateRecycle" class="w-full bg-white border-2 border-slate-600 rounded-lg px-3 py-1.5 text-sm font-semibold"></div>
+                            <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[11px] font-bold text-slate-700 mb-1">ปริมาณรวม (กก.)</label><input type="number" step="0.1" id="valRecycle" oninput="calcWasteTotal()" class="w-full bg-white border-2 border-slate-600 rounded-lg px-3 py-1.5 text-sm font-mono font-bold text-emerald-800" placeholder="0.0"></div>
+                            <div class="bg-white p-2.5 rounded-xl border-2 border-emerald-500 shadow-inner"><label class="block text-[11px] font-bold text-emerald-900 mb-1">รายได้ที่ขายได้ (บาท)</label><input type="number" step="1" id="incomeRecycle" class="w-full bg-white border-2 border-emerald-600 rounded-lg px-3 py-1.5 text-sm font-mono font-extrabold text-emerald-900" placeholder="0"></div>
+                        </div>
+                    </div>
+
+                    <!-- Category 3: Infectious Internal (Independent) -->
+                    <div class="bg-rose-50/70 p-4 rounded-2xl border-2 border-rose-400 space-y-3 shadow-xs">
+                        <div class="flex items-center justify-between pb-1.5 border-b-2 border-rose-400/30">
+                            <span class="text-xs font-bold text-rose-950 flex items-center gap-1.5"><i data-lucide="biohazard" class="w-4 h-4 text-rose-600"></i> ๒. ขยะติดเชื้อของโรงพยาบาลแม่อาย (แยกประเภทตามรอบจัดเก็บจริง)</span>
+                        </div>
+                        <div class="p-3 bg-white rounded-xl border-2 border-rose-300 transition-all" id="infGenBox">
+                            <label class="flex items-center gap-2 cursor-pointer mb-2">
+                                <input type="checkbox" id="chkInfGen" onchange="toggleWasteSection('infGen')" class="w-5 h-5 text-rose-600 border-2 border-slate-400 rounded">
+                                <span class="text-sm font-bold text-rose-900">บันทึกขยะติดเชื้อทั่วไป (รพ.แม่อาย)</span>
+                            </label>
+                            <div id="box_infGen" class="grid grid-cols-2 gap-3 opacity-40 pointer-events-none transition-opacity">
+                                <div><label class="block text-[10px] font-bold text-slate-500">วันที่จัดเก็บ</label><input type="date" id="dateInfGen" class="w-full border-2 border-slate-300 rounded-lg px-3 py-1.5 text-sm font-semibold"></div>
+                                <div><label class="block text-[10px] font-bold text-slate-500">ปริมาณ (กก.)</label><input type="number" step="0.1" id="valInfGen" oninput="calcWasteTotal()" class="w-full border-2 border-rose-500 rounded-lg px-3 py-1.5 text-sm font-mono font-bold text-rose-800" placeholder="0.0"></div>
+                            </div>
+                        </div>
+                        <div class="p-3 bg-white rounded-xl border-2 border-rose-300 transition-all" id="infHazBox">
+                            <label class="flex items-center gap-2 cursor-pointer mb-2">
+                                <input type="checkbox" id="chkInfHaz" onchange="toggleWasteSection('infHaz')" class="w-5 h-5 text-rose-600 border-2 border-slate-400 rounded">
+                                <span class="text-sm font-bold text-rose-900">บันทึกขยะติดเชื้ออันตราย / ไซโตท็อกซิก / ของมีคม (รพ.แม่อาย)</span>
+                            </label>
+                            <div id="box_infHaz" class="grid grid-cols-2 gap-3 opacity-40 pointer-events-none transition-opacity">
+                                <div><label class="block text-[10px] font-bold text-slate-500">วันที่จัดเก็บ</label><input type="date" id="dateInfHaz" class="w-full border-2 border-slate-300 rounded-lg px-3 py-1.5 text-sm font-semibold"></div>
+                                <div><label class="block text-[10px] font-bold text-slate-500">ปริมาณ (กก.)</label><input type="number" step="0.1" id="valInfHaz" oninput="calcWasteTotal()" class="w-full border-2 border-rose-500 rounded-lg px-3 py-1.5 text-sm font-mono font-bold text-rose-800" placeholder="0.0"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category 4: External Deposited -->
+                    <div class="bg-purple-50/70 p-4 rounded-2xl border-2 border-purple-400 space-y-3 shadow-xs transition-all" id="extInfBox">
+                        <label class="flex items-center justify-between cursor-pointer mb-1 border-b-2 border-purple-400/30 pb-2">
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" id="chkExtInf" onchange="toggleWasteSection('extInf')" class="w-5 h-5 text-purple-600 border-2 border-slate-400 rounded">
+                                <span class="text-sm font-bold text-purple-950 flex items-center gap-1.5"><i data-lucide="building" class="w-4 h-4 text-purple-700"></i> ๓. ขยะติดเชื้อรับฝากจากแหล่งอื่น (รพ.สต. / เครือข่าย)</span>
+                            </div>
+                        </label>
+                        <div id="box_extInf" class="space-y-3 opacity-40 pointer-events-none transition-opacity">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div><label class="block text-[11px] font-bold text-slate-700 mb-1">วันที่รับฝาก</label><input type="date" id="dateExtInf" class="w-full bg-white border-2 border-slate-600 rounded-lg px-3 py-1.5 text-sm font-semibold"></div>
+                                <div><label class="block text-[11px] font-bold text-slate-700 mb-1">หน่วยงานที่นำมาฝากส่งกำจัด</label><input type="text" id="sourceExtInf" class="w-full bg-white border-2 border-slate-600 rounded-lg px-3 py-1.5 text-xs text-slate-800 font-bold" value="รพ.สต.บ้านมะลิกา"></div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div class="bg-white p-2.5 rounded-xl border-2 border-purple-300">
+                                    <label class="block text-[11px] font-bold text-purple-900 mb-1">ขยะติดเชื้อทั่วไป (รับฝาก)</label>
+                                    <input type="number" step="0.1" id="valExtInfGen" oninput="calcWasteTotal()" class="w-full bg-purple-50/40 border-2 border-purple-400 rounded-lg p-2 text-sm font-mono font-bold text-purple-800" placeholder="0.0">
+                                </div>
+                                <div class="bg-white p-2.5 rounded-xl border-2 border-purple-300">
+                                    <label class="block text-[11px] font-bold text-purple-900 mb-1">ขยะติดเชื้ออันตราย / ของมีคม (รับฝาก)</label>
+                                    <input type="number" step="0.1" id="valExtInfHaz" oninput="calcWasteTotal()" class="w-full bg-purple-50/40 border-2 border-purple-400 rounded-lg p-2 text-sm font-mono font-bold text-purple-800" placeholder="0.0">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Up to 5 Image Uploads -->
+                    <div class="bg-slate-100 p-4 rounded-2xl border-2 border-slate-300 space-y-2">
+                        <label class="block text-xs font-bold text-slate-700 flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4 text-amber-700"></i> แนบภาพถ่ายหลักฐานหน้างาน (แนบได้ไม่เกิน 5 ภาพ)</label>
+                        <input type="file" accept="image/*" multiple id="wasteImageFile" onchange="handleMultipleImages(this, 'wasteImgPreview', 'waste')" class="w-full text-xs text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-700 cursor-pointer">
+                        <div id="wasteImgPreview" class="hidden mt-2 flex flex-wrap gap-2"></div>
+                    </div>
+
+                    <!-- Summary Bar -->
+                    <div class="p-4 bg-slate-100 rounded-2xl border-2 border-slate-300 space-y-2">
+                        <div class="flex flex-wrap items-center justify-between gap-2 text-xs border-b-2 border-slate-300 pb-2">
+                            <span class="text-slate-700 font-bold">ติดเชื้อ รพ.แม่อาย: <strong id="wasteHospInfDisplay" class="text-rose-700 font-mono font-bold text-sm">0.0 กก.</strong></span>
+                            <span class="text-slate-700 font-bold">ติดเชื้อรับฝาก (รพ.สต.): <strong id="wasteExtInfDisplay" class="text-purple-700 font-mono font-bold text-sm">0.0 กก.</strong></span>
+                        </div>
+                        <div class="flex items-center justify-between pt-1">
+                            <span class="text-xs font-bold text-slate-800">น้ำหนักขยะที่บันทึกในฟอร์มนี้รวมทั้งหมด:</span>
+                            <span id="wasteTotalDisplay" class="text-xl font-extrabold font-mono text-emerald-800">0.0 กก.</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 border-2 border-amber-800 text-base">
+                        <i data-lucide="save" class="w-5 h-5"></i><span>บันทึกปริมาณขยะมูลฝอยเข้าสู่ระบบ</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- TAB 4: Safety Section -->
+    <section id="pane-safety" class="tab-pane hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 eco-float-card p-5 sm:p-6 border-2 border-rose-700 shadow-md">
+                <div class="flex items-center justify-between pb-4 mb-4 border-b-2 border-rose-600/30">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-xl bg-rose-100 text-rose-800 flex items-center justify-center border-2 border-rose-600 shadow-xs"><i data-lucide="shield-alert" class="w-6 h-6"></i></div>
+                        <div>
+                            <h2 class="font-bold text-slate-900 text-base sm:text-lg">รายงานอุบัติการณ์ด้านสิ่งแวดล้อมและความปลอดภัย</h2>
+                            <p class="text-xs text-slate-600 font-medium">งานสิ่งแวดล้อม อาชีวอนามัย และความปลอดภัยบุคลากร รพ.แม่อาย</p>
+                        </div>
+                    </div>
+                </div>
+                <form id="safetyForm" onsubmit="handleSafetySubmit(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="text-xs font-bold text-slate-700">วันที่เกิดเหตุ / วันที่รายงาน</label>
+                                <span class="text-[10px] text-rose-700 font-bold bg-rose-50 px-2 py-0.5 rounded border border-rose-300"> ย้อนหลังได้ไม่เกิน 15 วัน</span>
+                            </div>
+                            <input type="date" id="safetyDate" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold text-slate-900" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">หมวดหมู่อุบัติการณ์ *</label>
+                            <input type="text" id="safetyType" list="safetySuggestions" class="w-full bg-white border-2 border-rose-500 rounded-xl px-3.5 py-2 text-sm font-bold text-rose-900" placeholder="พิมพ์หมวดหมู่ หรือเลือกจากรายการ" required>
+                            <datalist id="safetySuggestions">
+                                <option value="ไม่มีอุบัติการณ์ (Zero Incident)">
+                                <option value="เข็มฉีดยาตำ / ของมีคมบาด">
+                                <option value="สารเคมีหกกระเด็น / สัมผัสสารระเหย">
+                                <option value="ลื่นหกล้ม / ตกจากที่สูงใน รพ.">
+                                <option value="มูลฝอยติดเชื้อ/อันตรายตกหล่น">
+                                <option value="ระบบบำบัดน้ำเสียเอ่อล้น / กลิ่นรบกวน">
+                            </datalist>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">หน่วยงาน / อาคารที่เกิดเหตุ</label>
+                            <input type="text" id="safetyDept" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold text-slate-900" placeholder="เช่น แผนกอุบัติเหตุฉุกเฉิน (ER)">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">ผู้รายงาน *</label>
+                            <input type="text" id="safetyRole" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold text-slate-900" placeholder="ระบุชื่อ-สกุล หรือ ตำแหน่งผู้รายงาน" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">รายละเอียดเหตุการณ์ & การแก้ไขปัญหาเบื้องต้น</label>
+                        <textarea id="safetyDetail" rows="3" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl p-3 text-sm font-semibold text-slate-900 focus:bg-white" placeholder="ระบุรายละเอียด และแนวทางการป้องกันการเกิดซ้ำ ..."></textarea>
+                    </div>
+
+                    <!-- Up to 5 Image Uploads -->
+                    <div class="bg-slate-100 p-4 rounded-2xl border-2 border-slate-300 space-y-2">
+                        <label class="block text-xs font-bold text-slate-700 flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4 text-rose-700"></i> แนบภาพถ่ายหลักฐานเหตุการณ์ (แนบได้ไม่เกิน 5 ภาพ)</label>
+                        <input type="file" accept="image/*" multiple id="safetyImageFile" onchange="handleMultipleImages(this, 'safetyImgPreview', 'safety')" class="w-full text-xs text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-rose-700 file:text-white hover:file:bg-rose-800 cursor-pointer">
+                        <div id="safetyImgPreview" class="hidden mt-2 flex flex-wrap gap-2"></div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-rose-700 hover:bg-rose-800 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 border-2 border-rose-900 text-base">
+                        <i data-lucide="send" class="w-5 h-5"></i><span>ส่งรายงานอุบัติการณ์ด้านสิ่งแวดล้อมและความปลอดภัย</span>
+                    </button>
+                </form>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="eco-float-card p-5 border-2 border-rose-600 bg-rose-50/30">
+                    <h4 class="text-xs font-bold text-rose-900 uppercase tracking-wider mb-2 flex items-center gap-1"><i data-lucide="alert-triangle" class="w-4 h-4"></i> ขั้นตอนกรณีเข็มตำ (Needle Stick)</h4>
+                    <ol class="space-y-2 text-xs text-rose-800 list-decimal list-inside leading-relaxed font-semibold">
+                        <li><strong>บีบเลือดและล้างแผล</strong> ด้วยสบู่และน้ำสะอาดทันทีอย่างน้อย 5 นาที</li>
+                        <li><strong>รายงานหัวหน้าเวร</strong> และแจ้งกลุ่มงานควบคุมโรค/งานอาชีวอนามัย</li>
+                        <li><strong>ประเมินความเสี่ยง</strong> แหล่งต้นตอ (HIV, HBV, HCV)</li>
+                        <li><strong>รับยาต้านไวรัส PEP</strong> ทันที ไม่เกิน 72 ชั่วโมง</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TAB 5: Maintenance Section -->
+    <section id="pane-maintenance" class="tab-pane hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 eco-float-card p-5 sm:p-6 border-2 border-indigo-700 shadow-md">
+                <div class="flex items-center justify-between pb-4 mb-4 border-b-2 border-indigo-600/30">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-xl bg-indigo-100 text-indigo-800 flex items-center justify-center border-2 border-indigo-600 shadow-xs"><i data-lucide="wrench" class="w-6 h-6"></i></div>
+                        <div>
+                            <h2 class="font-bold text-slate-900 text-base sm:text-lg">บันทึกการแก้ไขปัญหาและงานซ่อมบำรุง</h2>
+                            <p class="text-xs text-slate-600 font-medium">บันทึกผลการปฏิบัติงาน การแก้ปัญหาหน้างาน และแนวทางป้องกัน (CAPA)</p>
+                        </div>
+                    </div>
+                </div>
+                <form id="maintenanceForm" onsubmit="handleMaintenanceSubmit(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div><label class="block text-xs font-bold text-slate-700 mb-1.5">วันที่ดำเนินการ</label><input type="date" id="maintDate" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold" required></div>
+                        <div><label class="block text-xs font-bold text-slate-700 mb-1.5">ระบบที่พบปัญหา</label><select id="maintCategory" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold" required><option>ระบบประปา</option><option>ระบบบำบัดน้ำเสีย</option><option>การจัดการขยะ</option><option>ความปลอดภัย</option></select></div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div><label class="block text-xs font-bold text-slate-700 mb-1.5">จุดที่เกิดเหตุ / อุปกรณ์</label><input type="text" id="maintItem" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold" required></div>
+                        <div><label class="block text-xs font-bold text-slate-700 mb-1.5">ปัญหาที่พบ</label><input type="text" id="maintProblem" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold" required></div>
+                    </div>
+                    <div><label class="block text-xs font-bold text-slate-700 mb-1.5">การแก้ไขปัญหา (Action Taken)</label><textarea id="maintAction" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl p-3 text-sm font-semibold" required></textarea></div>
+
+                    <!-- Up to 5 Image Uploads -->
+                    <div class="bg-slate-100 p-4 rounded-2xl border-2 border-slate-300 space-y-2">
+                        <label class="block text-xs font-bold text-slate-700 flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4 text-indigo-700"></i> แนบภาพถ่ายหลักฐานการซ่อมบำรุง (แนบได้ไม่เกิน 5 ภาพ)</label>
+                        <input type="file" accept="image/*" multiple id="maintImageFile" onchange="handleMultipleImages(this, 'maintImgPreview', 'maint')" class="w-full text-xs text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-700 file:text-white hover:file:bg-indigo-800 cursor-pointer">
+                        <div id="maintImgPreview" class="hidden mt-2 flex flex-wrap gap-2"></div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-indigo-700 hover:bg-indigo-800 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 border-2 border-indigo-900 text-base"><i data-lucide="check-square" class="w-5 h-5"></i><span>บันทึกผลการปฏิบัติงาน</span></button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- TAB 6: History Section -->
+    <section id="pane-history" class="tab-pane hidden">
+        <div class="eco-float-card p-6 border-2 border-slate-600 space-y-4">
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <h2 class="font-bold text-lg">ประวัติการบันทึกข้อมูลและหลักฐานภาพถ่าย (History)</h2>
+                <div class="flex items-center gap-2">
+                    <button onclick="clearHistoryData()" class="text-xs bg-rose-100 text-rose-800 font-bold px-3 py-1.5 rounded-lg border border-rose-300">ล้างประวัติ</button>
+                    <button onclick="exportToCSV()" class="text-xs bg-emerald-700 text-white font-bold px-3.5 py-1.5 rounded-lg shadow-sm">ส่งออก CSV</button>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-slate-100 border-b-2 border-slate-300">
+                        <tr>
+                            <th class="p-3 font-bold">วันที่</th>
+                            <th class="p-3 font-bold">หมวดงาน</th>
+                            <th class="p-3 font-bold">จุดตรวจ / ข้อมูล</th>
+                            <th class="p-3 font-bold">หลักฐานภาพถ่าย</th>
+                            <th class="p-3 font-bold">ผู้บันทึก</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- TAB 7: Form TS.2 PCD Report -->
+    <section id="pane-ts2" class="tab-pane hidden space-y-6">
+        <div class="eco-float-card p-5 sm:p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-2 border-emerald-700 shadow-md">
+            <div>
+                <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+                    <span class="bg-emerald-100 text-emerald-900 text-xs px-3 py-0.5 rounded-full font-bold border border-emerald-200">แบบ ทส. 2</span>
+                    <span class="bg-slate-100 text-slate-700 text-xs px-2.5 py-0.5 rounded-md font-semibold">ม.80 พ.ร.บ.สิ่งแวดล้อมฯ 2535</span>
+                </div>
+                <h2 class="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2">
+                    <i data-lucide="file-check-2" class="w-5 h-5 text-emerald-700"></i> รายงานสรุปผลการทำงานของระบบบำบัดน้ำเสียประจำเดือน (ทส.2)
+                </h2>
+                <p class="text-xs text-slate-600 mt-1 font-medium">สรุปข้อมูลสถิติสำหรับนำไปบันทึกผ่านระบบ e-Service ของ <strong>กรมควบคุมมลพิษ</strong> ภายในวันที่ 15 ของเดือนถัดไป</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+                <div class="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-xl border-2 border-slate-300">
+                    <label class="text-xs text-slate-700 font-bold pl-1.5">รอบเดือน:</label>
+                    <select id="ts2MonthSelect" onchange="updateTs2Report()" class="bg-white text-xs font-bold text-emerald-900 rounded-lg px-3 py-1.5 border-2 border-slate-400 focus:outline-none">
+                        <option value="2026-10" selected>ตุลาคม 2569</option>
+                        <option value="2026-09">กันยายน 2569</option>
+                        <option value="2026-11">พฤศจิกายน 2569</option>
+                        <option value="2026-12">ธันวาคม 2569</option>
+                    </select>
+                </div>
+                <button onclick="copyFullTs2Text()" class="inline-flex items-center gap-1.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow-sm transition border-2 border-emerald-900">
+                    <i data-lucide="copy" class="w-4 h-4"></i><span>คัดลอกสรุปเพื่อกรอกเว็บ คพ.</span>
+                </button>
+                <button onclick="window.print()" class="inline-flex items-center gap-1.5 bg-white hover:bg-slate-50 text-slate-800 text-xs font-bold px-3.5 py-2 rounded-xl border-2 border-slate-400 shadow-sm transition">
+                    <i data-lucide="printer" class="w-4 h-4 text-slate-600"></i><span>พิมพ์แบบฟอร์ม</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Printable Report Card -->
+        <div id="ts2PrintArea" class="eco-float-card p-6 sm:p-8 space-y-6 border-2 border-emerald-700 shadow-md">
+            <div class="text-center border-b-2 border-emerald-600/30 pb-5">
+                <div class="inline-block bg-emerald-100 text-emerald-900 text-xs px-3.5 py-1 rounded-full font-bold border-2 border-emerald-500 mb-2">
+                    แบบ ทส. 2 (แบบรายงานสรุปผลการทำงานของระบบบำบัดน้ำเสียประจำเดือน)
+                </div>
+                <h1 class="text-lg sm:text-xl font-extrabold text-slate-900">รายงานสรุปผลการทำงานของระบบบำบัดน้ำเสีย โรงพยาบาลแม่อาย</h1>
+                <p class="text-xs text-slate-600 mt-1 font-semibold">
+                    ตามมาตรา 80 แห่งพระราชบัญญัติส่งเสริมและรักษาคุณภาพสิ่งแวดล้อมแห่งชาติ พ.ศ. 2535 • ประจำเดือน <span id="ts2HeaderMonth" class="font-bold text-emerald-800">ตุลาคม 2569</span>
+                </p>
+            </div>
+
+            <!-- Section 1 -->
+            <div class="space-y-3">
+                <h3 class="font-bold text-xs text-emerald-950 uppercase tracking-wider flex items-center gap-2 pb-1.5 border-b-2 border-emerald-600/30">
+                    <i data-lucide="building-2" class="w-4.5 h-4.5 text-emerald-700"></i> ส่วนที่ 1 : ข้อมูลทั่วไปของแหล่งกำเนิดมลพิษ
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 text-xs">
+                    <div class="p-3.5 bg-emerald-50/60 rounded-xl border-2 border-emerald-300">
+                        <span class="text-slate-600 block text-[11px] font-medium">ชื่อสถานบริการ / แหล่งกำเนิด:</span>
+                        <strong class="text-slate-900 text-sm font-bold">โรงพยาบาลแม่อาย</strong>
+                    </div>
+                    <div class="p-3.5 bg-emerald-50/60 rounded-xl border-2 border-emerald-300">
+                        <span class="text-slate-600 block text-[11px] font-medium">ประเภทแหล่งกำเนิดมลพิษ:</span>
+                        <strong class="text-slate-900 text-sm font-bold">โรงพยาบาล ประเภทย่อย ประเภท ก ตั้งแต่ 30 เตียงขึ้นไป</strong>
+                    </div>
+                    <div class="p-3.5 bg-emerald-50/60 rounded-xl border-2 border-emerald-300">
+                        <span class="text-slate-600 block text-[11px] font-medium">สถานที่ตั้ง & หมายเลขโทรศัพท์:</span>
+                        <span class="text-slate-900 font-bold">191 หมู่ 8 ต.มะลิกา อ.แม่อาย จ.เชียงใหม่ 50280 โทร 053-459036</span>
+                    </div>
+                    <div class="p-3.5 bg-emerald-50/60 rounded-xl border-2 border-emerald-300">
+                        <span class="text-slate-600 block text-[11px] font-medium">ระบบบำบัดน้ำเสียที่ใช้:</span>
+                        <strong class="text-emerald-950 text-sm font-bold">ระบบตะกอนเร่ง (Activated Sludge : AS) บ่อเติมอากาศ</strong>
+                    </div>
+                    <div class="p-3.5 bg-emerald-50/60 rounded-xl border-2 border-emerald-300">
+                        <span class="text-slate-600 block text-[11px] font-medium">อัตราการสูบน้ำเสียเข้าบำบัด:</span>
+                        <strong class="text-emerald-950 text-sm font-bold font-mono">15.975 ลูกบาศก์เมตรต่อชั่วโมง</strong>
+                    </div>
+                    <div class="p-3.5 bg-emerald-50/60 rounded-xl border-2 border-emerald-300">
+                        <span class="text-slate-600 block text-[11px] font-medium">ผู้ควบคุมระบบ / ผู้จัดทำรายงาน:</span>
+                        <strong class="text-slate-900 text-sm font-bold">นายจีรศักดิ์ นวลดี (นักสาธารณสุขปฏิบัติการ)</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2 -->
+            <div class="space-y-3">
+                <div class="flex items-center justify-between pb-1.5 border-b-2 border-teal-600/30">
+                    <h3 class="font-bold text-xs text-teal-950 uppercase tracking-wider flex items-center gap-2">
+                        <i data-lucide="waves" class="w-4.5 h-4.5 text-teal-700"></i> ส่วนที่ 2 : สรุปปริมาณน้ำใช้, น้ำเสียเข้าระบบ และการใช้กระแสไฟฟ้า (ทส.2)
+                    </h3>
+                    <span class="text-[11px] bg-teal-100 text-teal-900 px-2.5 py-0.5 rounded-full font-bold border border-teal-300">ชม.ปั๊ม X 15.975 ลบ.ม./ชม.</span>
+                </div>
+                <div class="grid grid-cols-2 lg:grid-cols-5 gap-3.5">
+                    <div class="p-4 bg-sky-50/70 rounded-2xl border-2 border-sky-400">
+                        <div class="text-xs text-sky-900 font-bold mb-1">น้ำประปาที่ใช้รวม</div>
+                        <div class="text-xl sm:text-2xl font-extrabold text-sky-950 font-mono" id="ts2WaterTotal">4,275.0</div>
+                        <div class="text-[11px] text-sky-800 mt-0.5 font-semibold">ลบ.ม./เดือน</div>
+                    </div>
+                    <div class="p-4 bg-teal-50/70 rounded-2xl border-2 border-teal-400">
+                        <div class="text-xs text-teal-900 font-bold mb-1">ชั่วโมงปั๊มสูบรวม</div>
+                        <div class="text-xl sm:text-2xl font-extrabold text-teal-950 font-mono" id="ts2PumpHoursTotal">195.0</div>
+                        <div class="text-[11px] text-teal-800 mt-0.5 font-semibold">ชม./เดือน</div>
+                    </div>
+                    <div class="p-4 bg-emerald-50/80 rounded-2xl border-2 border-emerald-500">
+                        <div class="text-xs text-emerald-950 font-bold mb-1">น้ำเสียเข้าระบบรวม</div>
+                        <div class="text-xl sm:text-2xl font-extrabold text-emerald-950 font-mono" id="ts2WwtsTotal">3,115.1</div>
+                        <div class="text-[11px] text-emerald-800 mt-0.5 font-semibold">ลบ.ม./เดือน</div>
+                    </div>
+                    <div class="p-4 bg-indigo-50/70 rounded-2xl border-2 border-indigo-400">
+                        <div class="text-xs text-indigo-900 font-bold mb-1">น้ำเสียเฉลี่ยต่อวัน</div>
+                        <div class="text-xl sm:text-2xl font-extrabold text-indigo-950 font-mono" id="ts2WwtsDailyAvg">103.8</div>
+                        <div class="text-[11px] text-indigo-800 mt-0.5 font-semibold">ลบ.ม./วัน</div>
+                    </div>
+                    <div class="p-4 bg-amber-50/80 rounded-2xl border-2 border-amber-500 col-span-2 sm:col-span-1">
+                        <div class="text-xs text-amber-950 font-bold mb-1">การใช้ไฟฟ้าบำบัดน้ำเสีย</div>
+                        <div class="text-xl sm:text-2xl font-extrabold text-amber-950 font-mono" id="ts2ElectricityTotal">1,440.0</div>
+                        <div class="text-[11px] text-amber-900 mt-0.5 font-semibold">หน่วย (kWh)/เดือน</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Signature Section -->
+            <div class="pt-5 border-t-2 border-emerald-600/30 grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs">
+                <div class="space-y-1">
+                    <span class="text-slate-600 text-[11px] font-bold block">คำรับรองความถูกต้อง:</span>
+                    <p class="text-slate-700 leading-relaxed font-medium">
+                        ขอรับรองว่าข้อมูลและสถิติการทำงานของระบบบำบัดน้ำเสียที่รายงานข้างต้น เป็นความจริงทุกประการและบันทึกจากการปฏิบัติงานจริง ณ โรงพยาบาลแม่อาย
+                    </p>
+                </div>
+                <div class="text-center sm:text-right space-y-1 bg-slate-50 p-4 rounded-2xl border-2 border-slate-300">
+                    <div class="font-extrabold text-slate-900 text-sm">ลงชื่อ: นายจีรศักดิ์ นวลดี</div>
+                    <div class="text-slate-700 font-semibold">(นายจีรศักดิ์ นวลดี)</div>
+                    <div class="text-slate-600 text-[11px] font-medium">ตำแหน่ง นักสาธารณสุขปฏิบัติการ • กลุ่มงานควบคุมโรค</div>
+                    <div class="text-slate-500 text-[11px] font-mono pt-1">วันที่ออกรายงาน: <span id="ts2ReportDate">1 ตุลาคม 2569</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TAB 8: HAS & Water Quality Section -->
+    <section id="pane-has" class="tab-pane hidden space-y-6">
+        <div class="eco-float-card p-5 sm:p-6 border-2 border-blue-700 shadow-md">
+            <div class="flex items-center justify-between pb-4 mb-4 border-b-2 border-blue-600/30">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl bg-blue-100 text-blue-800 flex items-center justify-center border-2 border-blue-600 shadow-xs"><i data-lucide="clipboard-list" class="w-6 h-6"></i></div>
+                    <div>
+                        <h2 class="font-bold text-slate-900 text-base sm:text-lg">ระบบเฝ้าระวังความปลอดภัยด้านสาธารณสุข (HAS & ตู้น้ำดื่ม อ.11)</h2>
+                        <p class="text-xs text-slate-600 font-medium">บันทึกผลการประเมินมาตรฐานส้วมสาธารณะ (HAS) และคุณภาพตู้น้ำดื่ม</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form 1: HAS Assessment -->
+            <form id="hasForm" onsubmit="handleHasSubmit(event)" class="space-y-5 mb-10 pb-8 border-b-2 border-dashed border-slate-300">
+                <h3 class="font-bold text-blue-900 bg-blue-50 px-4 py-2 rounded-xl border border-blue-200 inline-flex items-center gap-2"><i data-lucide="check-square" class="w-5 h-5"></i> 1. แบบประเมินเกณฑ์มาตรฐานส้วม (HAS) กระทรวงสาธารณสุข</h3>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="lg:col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">สถานที่ตั้ง / อาคาร *</label>
+                        <input type="text" id="hasLocation" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold" placeholder="ระบุอาคาร เช่น OPD, ER" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">จำนวนห้องส้วม</label>
+                        <input type="number" id="hasToilets" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold" min="0" value="0">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">จำนวนที่ปัสสาวะ</label>
+                        <input type="number" id="hasUrinals" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold" min="0" value="0">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">จำนวนอ่างล้างมือ</label>
+                        <input type="number" id="hasSinks" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold" min="0" value="0">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">ผู้ประเมิน</label>
+                        <input type="text" id="hasInspector" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold" value="นายจีรศักดิ์ นวลดี">
+                    </div>
+                    <div class="lg:col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">วันที่ประเมิน</label>
+                        <input type="date" id="hasDate" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold" required>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto border-2 border-slate-300 rounded-2xl">
+                    <table class="w-full text-xs text-left">
+                        <thead class="bg-slate-100 border-b-2 border-slate-300">
+                            <tr>
+                                <th class="p-3 font-bold w-16 text-center">ข้อ</th>
+                                <th class="p-3 font-bold">เกณฑ์มาตรฐานส้วมสาธารณะระดับประเทศ (HAS)</th>
+                                <th class="p-3 font-bold text-center w-20">ผ่าน</th>
+                                <th class="p-3 font-bold text-center w-24">ไม่ผ่าน</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200" id="hasCriteriaTable">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Up to 5 Image Uploads for HAS -->
+                <div class="bg-slate-100 p-4 rounded-2xl border-2 border-slate-300 space-y-2">
+                    <label class="block text-xs font-bold text-slate-700 flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4 text-blue-700"></i> แนบภาพถ่ายหลักฐานส้วมสาธารณะ (แนบได้ไม่เกิน 5 ภาพ)</label>
+                    <input type="file" accept="image/*" multiple id="hasImageFile" onchange="handleMultipleImages(this, 'hasImgPreview', 'has')" class="w-full text-xs text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-700 file:text-white hover:file:bg-blue-800 cursor-pointer">
+                    <div id="hasImgPreview" class="hidden mt-2 flex flex-wrap gap-2"></div>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 border-2 border-blue-900 text-base">
+                    <i data-lucide="save" class="w-5 h-5"></i><span>บันทึกผลการประเมินส้วม (HAS)</span>
+                </button>
+            </form>
+
+            <!-- Form 2: A.11 Drinking Water -->
+            <form id="a11Form" onsubmit="handleA11Submit(event)" class="space-y-5">
+                <h3 class="font-bold text-sky-900 bg-sky-50 px-4 py-2 rounded-xl border border-sky-200 inline-flex items-center gap-2"><i data-lucide="droplet" class="w-5 h-5"></i> 2. แบบบันทึกผลการตรวจสอบคุณภาพน้ำตู้น้ำดื่ม ด้วยชุดทดสอบ อ.11</h3>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="lg:col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">สถานที่ตั้ง / หมายเลขตู้น้ำดื่ม *</label>
+                        <input type="text" id="a11Location" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold" placeholder="เช่น ตู้น้ำดื่มหยอดเหรียญหน้าอาคาร 1" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">วันที่ตรวจ</label>
+                        <input type="date" id="a11Date" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">ผลการตรวจเชื้อ (อ.11)</label>
+                        <select id="a11Result" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold text-slate-900">
+                            <option value="ไม่พบเชื้อ (ผลลบ)">ไม่พบเชื้อ (สีแดงใส/ผลลบ)</option>
+                            <option value="พบเชื้อ (ผลบวก)">พบเชื้อ (เปลี่ยนสี-มีก๊าซ/ผลบวก)</option>
+                        </select>
+                    </div>
+                    <div class="lg:col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">หมายเหตุ / แนวทางแก้ไข</label>
+                        <input type="text" id="a11Note" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold" placeholder="เช่น น้ำใส ปกติ หรือ สั่งปิดตู้ทันทีเพื่อล้างไส้กรอง">
+                    </div>
+                    <div class="lg:col-span-2">
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">ผู้ตรวจ</label>
+                        <input type="text" id="a11Inspector" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3.5 py-2 text-sm font-semibold" value="นายจีรศักดิ์ นวลดี">
+                    </div>
+                </div>
+
+                <!-- Guidelines for A.11 -->
+                <div class="p-4 bg-rose-50 border-2 border-rose-200 rounded-2xl space-y-2">
+                    <h4 class="font-bold text-rose-900 text-sm flex items-center gap-2"><i data-lucide="alert-triangle" class="w-4 h-4"></i> ข้อแนะนำเมื่อผลการตรวจเป็น "พบเชื้อ (ผลบวก)"</h4>
+                    <ol class="list-decimal list-inside text-xs text-rose-800 space-y-1.5 font-semibold">
+                        <li>ระงับการให้บริการตู้น้ำดื่มนั้นทันที เพื่อป้องกันความเสี่ยงโรคอาหารเป็นพิษหรือท้องร่วง</li>
+                        <li>ทำความสะอาดครั้งใหญ่ (Big Cleaning): ล้างถังพักน้ำ หัวจ่ายน้ำ รวมถึงตรวจสอบและเปลี่ยนไส้กรองน้ำ ตามกำหนดอายุการใช้งาน</li>
+                        <li>ตรวจซ้ำอีกครั้งด้วยชุดตรวจ อ.11 หลังจากปรับปรุงระบบเสร็จสิ้น หากผลกลับมาเป็น "ไม่พบเชื้อ" (สีแดงใส) จึงจะเปิดให้ใช้งานตามปกติได้</li>
+                    </ol>
+                </div>
+
+                <!-- Up to 5 Image Uploads for A.11 -->
+                <div class="bg-slate-100 p-4 rounded-2xl border-2 border-slate-300 space-y-2">
+                    <label class="block text-xs font-bold text-slate-700 flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4 text-sky-700"></i> แนบภาพถ่ายหลักฐานการตรวจน้ำ (แนบได้ไม่เกิน 5 ภาพ)</label>
+                    <input type="file" accept="image/*" multiple id="a11ImageFile" onchange="handleMultipleImages(this, 'a11ImgPreview', 'a11')" class="w-full text-xs text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-sky-700 file:text-white hover:file:bg-sky-800 cursor-pointer">
+                    <div id="a11ImgPreview" class="hidden mt-2 flex flex-wrap gap-2"></div>
+                </div>
+
+                <button type="submit" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition flex items-center justify-center gap-2 border-2 border-sky-800 text-base">
+                    <i data-lucide="save" class="w-5 h-5"></i><span>บันทึกผลการตรวจสอบตู้น้ำดื่ม (อ.11)</span>
+                </button>
+            </form>
+        </div>
+    </section>
+</main>
+
+<!-- Modals & Toasts -->
+<!-- Image Viewer Modal (Multi-image support) -->
+<div id="imageModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-4xl w-full p-5 shadow-2xl border-2 border-emerald-700 text-center space-y-4 max-h-[95vh] flex flex-col">
+        <div class="flex items-center justify-between pb-2 border-b">
+            <h3 class="font-bold text-slate-900 text-base">หลักฐานภาพถ่ายแนบ</h3>
+            <button onclick="closeImageModal()" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-700 hover:bg-slate-200">✕</button>
+        </div>
+        <div class="p-2 bg-slate-100 rounded-2xl border-2 border-slate-300 flex-1 overflow-y-auto custom-scroll">
+            <div id="modalImageContainer" class="flex flex-col gap-4 items-center">
+                <!-- Images injected here -->
+            </div>
+        </div>
+        <button onclick="closeImageModal()" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2.5 px-6 rounded-xl text-xs w-full sm:w-auto self-center">ปิดหน้าต่าง</button>
+    </div>
+</div>
+
+<div id="scanModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-5 sm:p-6 shadow-2xl border-2 border-emerald-700 flex flex-col max-h-[92vh]">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+            <h3 class="font-bold text-slate-900 text-sm sm:text-base">ศูนย์แสดงรูปภาพ & ป้าย QR Code โรงพยาบาลแม่อาย</h3>
+            <button onclick="closeScanModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center">✕</button>
+        </div>
+        <div class="py-3 space-y-3.5 text-xs overflow-y-auto custom-scroll">
+            <select id="qrPointSelect" onchange="renderSelectedQrCode()" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold text-slate-900">
+                <option value="M-01" selected>M-01 : มิเตอร์น้ำดิบเข้าโรงกรอง</option>
+                <option value="M-02">M-02 : มิเตอร์ส่งจ่ายน้ำประปารวม</option>
+                <option value="M-03">M-03 : มิเตอร์อาคารผู้ป่วยนอก (OPD)</option>
+                <option value="WWTS-01">WWTS-01 : บ่อบำบัดน้ำเสีย & ปั๊มสูบ</option>
+                <option value="WASTE-01">WASTE-01 : จุดชั่งขยะมูลฝอย (5 ชนิด + รับฝาก)</option>
+                <option value="SAFETY-01">SAFETY-01 : จุดรายงานความปลอดภัย & อุบัติการณ์</option>
+                <option value="HAS-01">HAS-01 : ตรวจมาตรฐานส้วม</option>
+            </select>
+            <div class="bg-emerald-50 p-4 rounded-2xl border-2 border-emerald-700 text-center space-y-2">
+                <div class="font-bold text-slate-900 text-sm" id="qrCardTitle">จุดตรวจที่ ๑ : มิเตอร์น้ำดิบ (M-01)</div>
+                <div class="inline-block p-3 bg-white rounded-2xl border-2 border-slate-300 shadow-md">
+                    <img id="qrGeneratedImg" src="" alt="QR" class="w-44 h-44 object-contain mx-auto">
+                </div>
+                <div class="text-[11px] font-mono text-slate-600" id="qrFullUrlPreview">...</div>
+            </div>
+            <button onclick="downloadQrImage()" class="w-full bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs">บันทึกรูปภาพ QR Code (.PNG)</button>
+        </div>
+    </div>
+</div>
+
+<div id="resetModal" class="fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-3 hidden">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+        <h3 class="font-bold text-slate-800 text-base">ตั้งค่าระบบ & เริ่ม 1 ต.ค. 2569</h3>
+        
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-2">
+            <label class="block text-xs font-bold text-slate-700 flex items-center gap-1.5"><i data-lucide="link" class="w-4 h-4 text-emerald-600"></i> 🔗 เชื่อมต่อฐานข้อมูลออนไลน์ (Google Apps Script URL)</label>
+            <input type="text" id="apiUrlInput" class="w-full bg-white border-2 border-slate-300 rounded-lg px-3 py-2 text-xs font-mono text-slate-600" placeholder="วางลิงก์ Web App ที่ได้จาก Google Apps Script ที่นี่...">
+            <p class="text-[10px] text-slate-500">หากเว้นว่างไว้ ระบบจะบันทึกข้อมูลลงในหน่วยความจำของเครื่อง (Offline Mode)</p>
+            <button onclick="saveApiUrl()" class="w-full bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-bold py-2 rounded-lg text-xs transition border border-emerald-300">บันทึกลิงก์ฐานข้อมูล</button>
+        </div>
+
+        <p class="text-xs text-slate-600 border-t pt-3">กดปุ่มด้านล่างเพื่อรีเซ็ตข้อมูลภายในเครื่องและเริ่มบันทึกข้อมูลจริงสำหรับปีงบประมาณใหม่</p>
+        <div class="flex gap-2">
+            <button onclick="resetToProduction()" class="flex-1 bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs">รีเซ็ตเริ่มบันทึกจริง</button>
+            <button onclick="closeResetModal()" class="bg-slate-200 text-slate-700 font-bold py-2 px-4 rounded-xl text-xs">ปิด</button>
+        </div>
+    </div>
+</div>
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="fixed inset-0 z-[60] bg-slate-950/60 backdrop-blur-sm flex flex-col items-center justify-center p-4 hidden">
+    <div class="w-12 h-12 border-4 border-emerald-400 border-t-emerald-700 rounded-full animate-spin mb-4"></div>
+    <div class="text-white font-bold text-lg drop-shadow-md" id="loadingText">กำลังซิงค์ข้อมูลกับคลาวด์...</div>
+    <div class="text-emerald-200 text-xs mt-1 drop-shadow-md">กรุณารอสักครู่ (หากมีรูปภาพอาจใช้เวลา 5-10 วินาที)</div>
+</div>
+
+<div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-emerald-900 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 font-bold text-sm border-2 border-emerald-500">
+    <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400"></i>
+    <div id="toastMessage">บันทึกเรียบร้อย</div>
+</div>
+
+<script>
+// --- Global State ---
+let historyRecords = [];
+let chartWater = null;
+let chartWastePie = null;
+let chartWwts = null;
+let chartMaintBar = null;
+
+const STORAGE_KEY_API = 'maeai_api_url';
+let currentApiUrl = localStorage.getItem(STORAGE_KEY_API) || '';
+
+// Multi-image state container (Max 5 per tab)
+let uploadedImagesState = {
+    water: [],
+    wwts: [],
+    waste: [],
+    safety: [],
+    maint: [],
+    has: [],
+    a11: []
+};
+
+const WWTS_PUMP_FLOW_RATE = 15.975;
+const STORAGE_KEY_HISTORY = 'maeai_env_records_v1.3.0';
+
+const hasCriteriaList = [
+    { cat: 'ความสะอาด (Healthy: H)', items: [
+        '1. พื้น ผนัง เพดาน โถส้วม ที่กดโถส้วม โถปัสสาวะ ที่กดโถปัสสาวะ สะอาด ไม่มีคราบสกปรก อยู่ในสภาพดี ใช้งานได้',
+        '2. น้ำใช้สะอาด เพียงพอ และไม่มีลูกน้ำยุง ภาชนะเก็บกักน้ำ ขันตักน้ำ สะอาด อยู่ในสภาพดี ใช้งานได้',
+        '3. กระดาษชำระเพียงพอต่อการใช้งานตลอดเวลาที่เปิดให้บริการ (อาจจำหน่ายหรือบริการฟรี) หรือสายฉีดน้ำชำระที่สะอาด อยู่ในสภาพดี ใช้งานได้',
+        '4. อ่างล้างมือ ก๊อกน้ำ กระจก สะอาด ไม่มีคราบสกปรก อยู่ในสภาพดีและใช้งานได้',
+        '5. สบู่ล้างมือ พร้อมให้ใช้ ตลอดเวลาที่เปิดให้บริการ',
+        '6. ถังรองรับมูลฝอย สะอาด มีฝาปิด อยู่ในสภาพดี ไม่รั่วซึม ตั้งอยู่ในบริเวณอ่างล้างมือ หรือบริเวณใกล้เคียง',
+        '7. มีการระบายอากาศดี และ ไม่มีกลิ่นเหม็น',
+        '8. สภาพท่อระบายสิ่งปฏิกูลและถังเก็บกักไม่รั่วแตกหรือชำรุด',
+        '9. จัดให้มีการทำความสะอาด และระบบการควบคุมตรวจตรา เป็นประจำ'
+    ]},
+    { cat: 'ความเพียงพอ (Accessibility: A)', items: [
+        '10. จัดให้มีส้วมนั่งราบสำหรับผู้พิการ ผู้สูงวัย หญิงตั้งครรภ์และประชาชนทั่วไปอย่างน้อยหนึ่งที่',
+        '11. ส้วมสาธารณะพร้อมใช้งานตลอดเวลาที่เปิดให้บริการ'
+    ]},
+    { cat: 'ความปลอดภัย (Safety: S)', items: [
+        '12. บริเวณที่ตั้งส้วมต้องไม่อยู่ที่ลับตา/เปลี่ยว',
+        '13. กรณีที่มีห้องส้วมตั้งแต่ 2 ห้องขึ้นไป ให้แยกเป็นห้องส้วมสำหรับชาย - หญิง โดยมีป้ายหรือสัญลักษณ์ที่ชัดเจน',
+        '14. ประตู ที่จับเปิด – ปิด และที่ล็อคด้านใน สะอาด อยู่ในสภาพดี ใช้งานได้',
+        '15. พื้นห้องส้วมแห้ง ทำด้วยวัสดุสีอ่อน (ขาว/ครีม)',
+        '16. แสงสว่างเพียงพอ สามารถมองเห็นได้ทั่วบริเวณ'
+    ]}
+];
+
+const defaultMockHistory = [
+    { date: '2026-10-01', cat: 'จัดการขยะ', point: 'จุดรวมขยะ รพ.แม่อาย', value: 'ติดเชื้อ รพ. 19.4 กก., รับฝาก รพ.สต. 10.2 กก. (รวม 120.5 กก.)', status: 'ผ่านเกณฑ์', recorder: 'นายจีรศักดิ์ นวลดี', images: [] },
+    { date: '2026-10-01', cat: 'บำบัดน้ำเสีย', point: 'บ่อสูบน้ำเสีย & บ่อเติมอากาศ', value: 'ปั๊ม 6.5 ชม. (103.8 ลบ.ม.) | DO: 2.8 | คลอรีน: 0.50 mg/L', status: 'ผ่านเกณฑ์', recorder: 'นายจีรศักดิ์ นวลดี', images: [] },
+    { date: '2026-10-01', cat: 'ระบบประปา', point: 'มิเตอร์ M-01 น้ำดิบ', value: 'ใช้น้ำ: 142.5 ลบ.ม. (คลอรีน: 0.35 mg/L)', status: 'ผ่านเกณฑ์', recorder: 'นายจีรศักดิ์ นวลดี', images: [] }
+];
+
+document.addEventListener('DOMContentLoaded', () => {
+    lucide.createIcons();
+    const today = new Date().toISOString().split('T')[0];
+    ['waterDate', 'dateAlum', 'dateChlorineWater', 'wwtsDate', 'dateChlorineWwts', 
+     'wasteDate', 'dateRecycle', 'dateInfGen', 'dateInfHaz', 'dateExtInf', 'safetyDate', 'maintDate', 'hasDate', 'a11Date'].forEach(id => {
+        const el = document.getElementById(id); if(el) el.value = today;
+    });
+    
+    // Set API URL input
+    const apiInput = document.getElementById('apiUrlInput');
+    if(apiInput) apiInput.value = currentApiUrl;
+
+    renderHasTable();
+    loadHistoryFromStorage();
+    initCharts();
+    calcWasteTotal();
+});
+
+function switchCategory(cat) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('active', 'bg-white', 'text-emerald-800', 'shadow-sm', 'text-amber-900', 'bg-amber-100', 'text-blue-900', 'bg-blue-100');
+        if(!b.id.includes('waste-exec')) b.classList.add('text-slate-600');
+    });
+    const p = document.getElementById(`pane-${cat}`);
+    const b = document.getElementById(`tabBtn-${cat}`);
+    if (p) p.classList.remove('hidden');
+    if (b) {
+        if(cat === 'waste-exec') {
+            b.classList.add('active', 'bg-amber-100', 'text-amber-900', 'shadow-sm');
+            b.classList.remove('text-slate-600');
+        } else if (cat === 'has') {
+            b.classList.add('active', 'bg-white', 'text-blue-800', 'shadow-sm');
+            b.classList.remove('text-slate-600');
+        } else {
+            b.classList.add('active', 'bg-white', 'text-emerald-800', 'shadow-sm');
+            b.classList.remove('text-slate-600');
+        }
+    }
+}
+
+// Image compression and multi-upload helper
+function compressImage(file, callback) {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = event => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 800; const MAX_HEIGHT = 800;
+            let width = img.width; let height = img.height;
+            if (width > height) { if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } } 
+            else { if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; } }
+            canvas.width = width; canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            callback(canvas.toDataURL('image/jpeg', 0.6));
+        };
+    };
+}
+
+function handleMultipleImages(input, previewId, tabKey) {
+    if (!input.files || input.files.length === 0) return;
+    const previewContainer = document.getElementById(previewId);
+    
+    // Check if adding these exceeds 5
+    if (uploadedImagesState[tabKey].length + input.files.length > 5) {
+        showToast('แนบภาพได้สูงสุด 5 ภาพต่อครั้งเท่านั้นครับ');
+        input.value = '';
+        return;
+    }
+
+    if (previewContainer) previewContainer.classList.remove('hidden');
+
+    Array.from(input.files).forEach(file => {
+        compressImage(file, (compressedBase64) => {
+            if(uploadedImagesState[tabKey].length < 5) {
+                uploadedImagesState[tabKey].push(compressedBase64);
+                renderImageThumbnails(tabKey, previewId);
+            }
+        });
+    });
+    // clear input so same files can be selected again if removed
+    input.value = '';
+}
+
+function renderImageThumbnails(tabKey, previewId) {
+    const previewContainer = document.getElementById(previewId);
+    if (!previewContainer) return;
+    previewContainer.innerHTML = '';
+    
+    if (uploadedImagesState[tabKey].length === 0) {
+        previewContainer.classList.add('hidden');
+        return;
+    }
+
+    uploadedImagesState[tabKey].forEach((base64, index) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'relative inline-block';
+        wrap.innerHTML = `
+            <img src="${base64}" class="h-20 w-20 rounded-xl border-2 border-slate-300 object-cover shadow-sm">
+            <button type="button" onclick="removeImage('${tabKey}', ${index}, '${previewId}')" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center font-bold text-xs shadow-md border-2 border-white hover:bg-rose-600 transition">✕</button>
+        `;
+        previewContainer.appendChild(wrap);
+    });
+}
+
+function removeImage(tabKey, index, previewId) {
+    uploadedImagesState[tabKey].splice(index, 1);
+    renderImageThumbnails(tabKey, previewId);
+}
+
+function viewMultipleImages(encodedImagesStr) {
+    const modal = document.getElementById('imageModal');
+    const container = document.getElementById('modalImageContainer');
+    if (modal && container && encodedImagesStr) {
+        try {
+            const images = JSON.parse(decodeURIComponent(encodedImagesStr));
+            container.innerHTML = images.map(src => `<img src="${src}" class="max-w-full rounded-xl border-2 border-slate-300 shadow-md">`).join('');
+            modal.classList.remove('hidden');
+        } catch(e) { console.error('Failed to parse images', e); }
+    }
+}
+function closeImageModal() {
+    const modal = document.getElementById('imageModal');
+    if (modal) modal.classList.add('hidden');
+}
+
+// Independent Chemicals & Sections
+function toggleChemical(type) {
+    const chk = document.getElementById(type === 'alum' ? 'chkAlum' : 'chkChlorineWater');
+    const fields = document.getElementById(type === 'alum' ? 'alumFields' : 'chlorineFields');
+    const box = document.getElementById(type === 'alum' ? 'alumBox' : 'chlorineBox');
+    if (chk && chk.checked) {
+        fields.classList.remove('opacity-40', 'pointer-events-none');
+        box.classList.replace('border-sky-400', 'border-sky-600');
+        box.classList.add('bg-sky-50');
+    } else {
+        fields.classList.add('opacity-40', 'pointer-events-none');
+        box.classList.replace('border-sky-600', 'border-sky-400');
+        box.classList.remove('bg-sky-50');
+    }
+}
+
+function toggleWwtsChemical() {
+    const chk = document.getElementById('chkChlorineWwts');
+    const fields = document.getElementById('chlorineWwtsFields');
+    const box = document.getElementById('chlorineWwtsBox');
+    if (chk && chk.checked) {
+        fields.classList.remove('opacity-40', 'pointer-events-none');
+        box.classList.replace('border-indigo-400', 'border-indigo-600');
+    } else {
+        fields.classList.add('opacity-40', 'pointer-events-none');
+        box.classList.replace('border-indigo-600', 'border-indigo-400');
+    }
+}
+
+function toggleWasteSection(sectionId) {
+    const chk = document.getElementById('chk' + sectionId.charAt(0).toUpperCase() + sectionId.slice(1));
+    const box = document.getElementById('box_' + sectionId);
+    const container = document.getElementById(sectionId + 'Box') || document.getElementById('extInfBox'); 
+    if (chk && chk.checked) {
+        box.classList.remove('opacity-40', 'pointer-events-none');
+        if(container && sectionId === 'recycle') { container.classList.replace('border-emerald-400', 'border-emerald-600'); container.classList.add('bg-emerald-50'); }
+        if(container && sectionId === 'infGen') container.classList.replace('border-rose-300', 'border-rose-500');
+        if(container && sectionId === 'infHaz') container.classList.replace('border-rose-300', 'border-rose-500');
+        if(container && sectionId === 'extInf') { container.classList.replace('border-purple-400', 'border-purple-600'); container.classList.add('bg-purple-50'); }
+    } else {
+        box.classList.add('opacity-40', 'pointer-events-none');
+        if(container && sectionId === 'recycle') { container.classList.replace('border-emerald-600', 'border-emerald-400'); container.classList.remove('bg-emerald-50'); }
+        if(container && sectionId === 'infGen') container.classList.replace('border-rose-500', 'border-rose-300');
+        if(container && sectionId === 'infHaz') container.classList.replace('border-rose-500', 'border-rose-300');
+        if(container && sectionId === 'extInf') { container.classList.replace('border-purple-600', 'border-purple-400'); container.classList.remove('bg-purple-50'); }
+    }
+    calcWasteTotal();
+}
+
+function renderHasTable() {
+    const tbody = document.getElementById('hasCriteriaTable');
+    if(!tbody) return;
+    let html = '';
+    let globalIndex = 1;
+    hasCriteriaList.forEach((group, gIdx) => {
+        html += `<tr class="bg-blue-50/50"><td colspan="4" class="p-2 font-bold text-blue-900">${group.cat}</td></tr>`;
+        group.items.forEach((item, iIdx) => {
+            html += `
+            <tr class="hover:bg-slate-50 transition">
+                <td class="p-3 text-center font-bold">${globalIndex}</td>
+                <td class="p-3 text-slate-700">${item}</td>
+                <td class="p-3 text-center">
+                    <input type="radio" name="has_${globalIndex}" value="pass" class="has-radio" checked>
+                </td>
+                <td class="p-3 text-center">
+                    <input type="radio" name="has_${globalIndex}" value="fail" class="has-radio">
+                </td>
+            </tr>`;
+            globalIndex++;
+        });
+    });
+    tbody.innerHTML = html;
+}
+
+function calculateWwtsInflow() {
+    const prev = parseFloat(document.getElementById('wwtsPumpPrev')?.value) || 0;
+    const todayInput = document.getElementById('wwtsPumpToday');
+    const calcBox = document.getElementById('wwtsCalcBox');
+    const label = document.getElementById('wwtsCalcLabel');
+    const val = document.getElementById('wwtsCalcValue');
+    if (!todayInput || todayInput.value.trim() === '') {
+        if (calcBox) calcBox.classList.add('hidden');
+        return { hours: 0, inflowM3: 0 };
+    }
+    const today = parseFloat(todayInput.value);
+    if (isNaN(today)) { if (calcBox) calcBox.classList.add('hidden'); return { hours: 0, inflowM3: 0 }; }
+    const hours = parseFloat((today - prev).toFixed(1));
+    const inflowM3 = parseFloat((hours * WWTS_PUMP_FLOW_RATE).toFixed(1));
+    if (calcBox && hours >= 0) {
+        calcBox.classList.remove('hidden');
+        if (label) label.innerText = `ปั๊ม ${hours} ชม.:`;
+        if (val) val.innerText = `+${inflowM3} ลบ.ม.`;
+    } else if (calcBox) calcBox.classList.add('hidden');
+    return { hours, inflowM3 };
+}
+
+function calculateWwtsElectricity() {
+    const prev = parseFloat(document.getElementById('wwtsElectricPrev')?.value) || 0;
+    const todayInput = document.getElementById('wwtsElectricToday');
+    const box = document.getElementById('wwtsElectricBox');
+    const valEl = document.getElementById('wwtsElectricVal');
+    if (!todayInput || todayInput.value.trim() === '') {
+        if (box) box.classList.add('hidden'); return 0;
+    }
+    const today = parseFloat(todayInput.value);
+    if (isNaN(today)) { if (box) box.classList.add('hidden'); return 0; }
+    const diff = parseFloat((today - prev).toFixed(1));
+    if (box && diff >= 0) {
+        box.classList.remove('hidden');
+        if(valEl) valEl.innerText = `+${diff} หน่วย (kWh)`;
+    } else if (box) box.classList.add('hidden');
+    return diff;
+}
+
+function calcWasteTotal() {
+    const g = parseFloat(document.getElementById('wGeneral')?.value) || 0;
+    const o = parseFloat(document.getElementById('wOrganic')?.value) || 0;
+    const haz = parseFloat(document.getElementById('wHazardous')?.value) || 0;
+    const r = (document.getElementById('chkRecycle')?.checked) ? (parseFloat(document.getElementById('valRecycle')?.value) || 0) : 0;
+    const infGen = (document.getElementById('chkInfGen')?.checked) ? (parseFloat(document.getElementById('valInfGen')?.value) || 0) : 0;
+    const infHaz = (document.getElementById('chkInfHaz')?.checked) ? (parseFloat(document.getElementById('valInfHaz')?.value) || 0) : 0;
+    const hospInfTotal = parseFloat((infGen + infHaz).toFixed(1));
+    
+    let extInfTotal = 0;
+    if (document.getElementById('chkExtInf')?.checked) {
+        const eGen = parseFloat(document.getElementById('valExtInfGen')?.value) || 0;
+        const eHaz = parseFloat(document.getElementById('valExtInfHaz')?.value) || 0;
+        extInfTotal = parseFloat((eGen + eHaz).toFixed(1));
+    }
+    
+    const totalInf = parseFloat((hospInfTotal + extInfTotal).toFixed(1));
+    const grandTotal = parseFloat((g + o + haz + r + totalInf).toFixed(1));
+    
+    if (document.getElementById('wasteHospInfDisplay')) document.getElementById('wasteHospInfDisplay').innerText = hospInfTotal + ' กก.';
+    if (document.getElementById('wasteExtInfDisplay')) document.getElementById('wasteExtInfDisplay').innerText = extInfTotal + ' กก.';
+    if (document.getElementById('wasteTotalDisplay')) document.getElementById('wasteTotalDisplay').innerText = grandTotal + ' กก.';
+    return { g, o, haz, r, infGen, infHaz, extInfTotal, grandTotal };
+}
+
+function handleWaterSubmit(e) {
+    e.preventDefault();
+    const curr = document.getElementById('waterCurrent').value;
+    const timeVal = document.getElementById('waterTime')?.value || '08:30';
+    addHistoryRow({
+        date: document.getElementById('waterDate').value + ' ' + timeVal,
+        cat: 'ระบบประปา',
+        point: document.getElementById('waterMeterSelect').value,
+        value: `ใช้น้ำ ${curr} ลบ.ม. (จุดตรวจ: ${document.getElementById('waterTestPoint').value})`,
+        status: 'ผ่านเกณฑ์',
+        recorder: 'นายจีรศักดิ์ นวลดี',
+        images: [...uploadedImagesState.water]
+    });
+    
+    // Add sub-records if checked
+    if(document.getElementById('chkAlum')?.checked) {
+        addHistoryRow({
+            date: document.getElementById('dateAlum').value,
+            cat: 'ระบบประปา', point: 'เติมสารส้ม', value: `ปริมาณ ${document.getElementById('valAlum').value} กก.`,
+            status: 'เสร็จสิ้น', recorder: 'นายจีรศักดิ์ นวลดี', images: []
+        });
+    }
+    if(document.getElementById('chkChlorineWater')?.checked) {
+        addHistoryRow({
+            date: document.getElementById('dateChlorineWater').value,
+            cat: 'ระบบประปา', point: 'เติมคลอรีน', value: `ปริมาณ ${document.getElementById('valChlorineWater').value} ลิตร/กก.`,
+            status: 'เสร็จสิ้น', recorder: 'นายจีรศักดิ์ นวลดี', images: []
+        });
+    }
+
+    uploadedImagesState.water = [];
+    renderImageThumbnails('water', 'waterImgPreview');
+    showToast(`บันทึกมิเตอร์ประปาสำเร็จ`);
+}
+
+function handleWwtsSubmit(e) {
+    e.preventDefault();
+    const pumpCalc = calculateWwtsInflow();
+    const doVal = document.getElementById('wwtsDo').value;
+    addHistoryRow({
+        date: document.getElementById('wwtsDate').value,
+        cat: 'น้ำเสีย',
+        point: 'ระบบบำบัด',
+        value: `สูบ ${pumpCalc.inflowM3} ลบ.ม. DO:${doVal}`,
+        status: 'ผ่านเกณฑ์',
+        recorder: 'นายจีรศักดิ์ นวลดี',
+        images: [...uploadedImagesState.wwts]
+    });
+
+    if(document.getElementById('chkChlorineWwts')?.checked) {
+        addHistoryRow({
+            date: document.getElementById('dateChlorineWwts').value,
+            cat: 'น้ำเสีย', point: 'เติมคลอรีนฆ่าเชื้อ', value: `ปริมาณ ${document.getElementById('valChlorineWwts').value} ลิตร/กก.`,
+            status: 'เสร็จสิ้น', recorder: 'นายจีรศักดิ์ นวลดี', images: []
+        });
+    }
+
+    uploadedImagesState.wwts = [];
+    renderImageThumbnails('wwts', 'wwtsImgPreview');
+    showToast('บันทึกข้อมูลน้ำเสียเรียบร้อย');
+}
+
+function handleWasteSubmit(e) {
+    e.preventDefault();
+    const wCalc = calcWasteTotal();
+    
+    // Main record
+    addHistoryRow({
+        date: document.getElementById('wasteDate').value,
+        cat: 'จัดการขยะ',
+        point: 'แยก 5 ประเภท',
+        value: `ทั่วไป/อินทรีย์/อันตราย รวม ${(wCalc.g + wCalc.o + wCalc.haz).toFixed(1)} กก.`,
+        status: 'เสร็จสิ้น',
+        recorder: 'นายจีรศักดิ์ นวลดี',
+        images: [...uploadedImagesState.waste]
+    });
+
+    // Independent records
+    if(document.getElementById('chkRecycle')?.checked) {
+        addHistoryRow({
+            date: document.getElementById('dateRecycle').value,
+            cat: 'จัดการขยะ', point: 'จำหน่ายรีไซเคิล', value: `${document.getElementById('valRecycle').value} กก. (รายได้ ${document.getElementById('incomeRecycle').value} บ.)`,
+            status: 'ขายเข้ากองทุน', recorder: 'นายจีรศักดิ์ นวลดี', images: []
+        });
+    }
+    if(document.getElementById('chkInfGen')?.checked) {
+        addHistoryRow({
+            date: document.getElementById('dateInfGen').value,
+            cat: 'จัดการขยะ', point: 'ติดเชื้อทั่วไป รพ.', value: `${document.getElementById('valInfGen').value} กก.`,
+            status: 'รอส่งกำจัด', recorder: 'นายจีรศักดิ์ นวลดี', images: []
+        });
+    }
+    if(document.getElementById('chkInfHaz')?.checked) {
+        addHistoryRow({
+            date: document.getElementById('dateInfHaz').value,
+            cat: 'จัดการขยะ', point: 'ติดเชื้ออันตราย/มีคม รพ.', value: `${document.getElementById('valInfHaz').value} กก.`,
+            status: 'รอส่งกำจัด', recorder: 'นายจีรศักดิ์ นวลดี', images: []
+        });
+    }
+    if(document.getElementById('chkExtInf')?.checked) {
+        addHistoryRow({
+            date: document.getElementById('dateExtInf').value,
+            cat: 'จัดการขยะ', point: `รับฝากจาก ${document.getElementById('sourceExtInf').value}`, value: `${wCalc.extInfTotal} กก.`,
+            status: 'รับฝาก', recorder: 'นายจีรศักดิ์ นวลดี', images: []
+        });
+    }
+
+    uploadedImagesState.waste = [];
+    renderImageThumbnails('waste', 'wasteImgPreview');
+    showToast('บันทึกปริมาณขยะมูลฝอยเรียบร้อย');
+}
+
+function handleSafetySubmit(e) {
+    e.preventDefault();
+    const type = document.getElementById('safetyType').value || 'ไม่มีอุบัติการณ์';
+    const dept = document.getElementById('safetyDept').value || '-';
+    const role = document.getElementById('safetyRole').value || '-';
+    const detail = document.getElementById('safetyDetail').value || '-';
+    
+    addHistoryRow({
+        date: document.getElementById('safetyDate').value,
+        cat: 'ความปลอดภัย',
+        point: `${dept} (ผู้รายงาน: ${role})`,
+        value: `หมวดหมู่: ${type} | รายละเอียด: ${detail}`,
+        status: type.includes('ไม่มี') ? 'ปลอดภัย' : 'เฝ้าระวัง',
+        recorder: role,
+        images: [...uploadedImagesState.safety]
+    });
+    uploadedImagesState.safety = [];
+    renderImageThumbnails('safety', 'safetyImgPreview');
+
+    if (!type.includes('ไม่มีอุบัติการณ์') && !type.includes('Zero')) {
+        const kpiAcc = document.getElementById('kpiAccident');
+        if (kpiAcc) kpiAcc.innerText = parseInt(kpiAcc.innerText || '0') + 1;
+    }
+    showToast('ส่งรายงานอุบัติการณ์ด้านสิ่งแวดล้อมเรียบร้อยแล้ว');
+    e.target.reset();
+    document.getElementById('safetyDate').value = new Date().toISOString().split('T')[0];
+}
+
+function handleMaintenanceSubmit(e) {
+    e.preventDefault();
+    addHistoryRow({
+        date: document.getElementById('maintDate').value,
+        cat: 'ซ่อมบำรุง',
+        point: document.getElementById('maintItem').value,
+        value: document.getElementById('maintAction').value,
+        status: 'เสร็จสิ้น',
+        recorder: 'นายจีรศักดิ์ นวลดี',
+        images: [...uploadedImagesState.maint]
+    });
+    uploadedImagesState.maint = [];
+    renderImageThumbnails('maint', 'maintImgPreview');
+    showToast('บันทึกงานซ่อมบำรุงเรียบร้อย');
+}
+
+function handleHasSubmit(e) {
+    e.preventDefault();
+    let failCount = 0;
+    let failedItems = [];
+    for(let i=1; i<=16; i++) {
+        const radios = document.getElementsByName(`has_${i}`);
+        let passed = true;
+        for(let r of radios) { if(r.value === 'fail' && r.checked) passed = false; }
+        if(!passed) { failCount++; failedItems.push(i); }
+    }
+    
+    const statusText = failCount === 0 ? 'ผ่านเกณฑ์ (16 ข้อ)' : `ต้องปรับปรุง (ข้อ ${failedItems.join(',')})`;
+    addHistoryRow({
+        date: document.getElementById('hasDate').value,
+        cat: 'HAS ส้วมสาธารณะ',
+        point: document.getElementById('hasLocation').value,
+        value: `ห้องส้วม ${document.getElementById('hasToilets').value} ที่, อ่างล้างมือ ${document.getElementById('hasSinks').value} ที่`,
+        status: failCount === 0 ? 'ผ่านเกณฑ์' : 'ต้องปรับปรุง',
+        recorder: document.getElementById('hasInspector').value,
+        images: [...uploadedImagesState.has]
+    });
+    uploadedImagesState.has = [];
+    renderImageThumbnails('has', 'hasImgPreview');
+    showToast('บันทึกแบบประเมิน HAS เรียบร้อย');
+}
+
+function handleA11Submit(e) {
+    e.preventDefault();
+    const result = document.getElementById('a11Result').value;
+    addHistoryRow({
+        date: document.getElementById('a11Date').value,
+        cat: 'คุณภาพตู้น้ำดื่ม อ.11',
+        point: document.getElementById('a11Location').value,
+        value: `ผลการตรวจ: ${result} | หมายเหตุ: ${document.getElementById('a11Note').value}`,
+        status: result.includes('ไม่พบเชื้อ') ? 'ผ่านเกณฑ์' : 'เฝ้าระวัง (พบเชื้อ)',
+        recorder: document.getElementById('a11Inspector').value,
+        images: [...uploadedImagesState.a11]
+    });
+    uploadedImagesState.a11 = [];
+    renderImageThumbnails('a11', 'a11ImgPreview');
+    showToast('บันทึกแบบตรวจ อ.11 เรียบร้อย');
+    if(result.includes('พบเชื้อ')) {
+        setTimeout(() => alert('⚠️ ตรวจพบเชื้อ! กรุณาระงับการให้บริการและล้างทำความสะอาดตู้ตามคู่มือทันที'), 500);
+    }
+}
+
+// ----------------------------------------------------
+// ระบบ Cloud Sync & API Functions
+// ----------------------------------------------------
+function showLoading(show, text = 'กำลังทำงาน...') {
+    const loader = document.getElementById('loadingOverlay');
+    const label = document.getElementById('loadingText');
+    if (loader) {
+        if (show) {
+            if (label) label.innerText = text;
+            loader.classList.remove('hidden');
+        } else {
+            loader.classList.add('hidden');
+        }
+    }
+}
+
+function saveApiUrl() {
+    const input = document.getElementById('apiUrlInput');
+    if (input) {
+        const url = input.value.trim();
+        localStorage.setItem(STORAGE_KEY_API, url);
+        currentApiUrl = url;
+        showToast('บันทึกลิงก์ฐานข้อมูลเรียบร้อยแล้ว');
+        if(url !== "") loadHistoryFromStorage(); // รีโหลดข้อมูลทันทีถ้าเชื่อมต่อใหม่
+    }
+}
+
+async function addHistoryRow(record) {
+    if (currentApiUrl !== "") {
+        // --- ONLINE MODE (Save to Google Sheets) ---
+        showLoading(true, 'กำลังอัปโหลดข้อมูลและรูปภาพขึ้นคลาวด์...');
+        try {
+            const response = await fetch(currentApiUrl, {
+                method: 'POST',
+                redirect: 'follow',
+                headers: {
+                    "Content-Type": "text/plain;charset=utf-8",
+                },
+                body: JSON.stringify(record)
+            });
+            const result = await response.json();
+            if (result.result === 'success') {
+                showToast('อัปโหลดขึ้นฐานข้อมูลสำเร็จ');
+                // โหลดข้อมูลล่าสุดกลับมาแสดง
+                await loadHistoryFromStorage();
+            } else {
+                alert('เกิดข้อผิดพลาดจากเซิร์ฟเวอร์: ' + result.error);
+            }
+        } catch (error) {
+            alert('ไม่สามารถเชื่อมต่อฐานข้อมูลได้: ' + error.message);
+        } finally {
+            showLoading(false);
+        }
+    } else {
+        // --- OFFLINE MODE (Save to Local Storage) ---
+        historyRecords.unshift(record);
+        saveHistoryToStorage();
+        renderHistoryTable();
+    }
+}
+
+function renderHistoryTable() {
+    const tbody = document.getElementById('historyTableBody');
+    if(!tbody) return;
+    tbody.innerHTML = historyRecords.map(r => {
+        let imageHtml = `<span class="text-slate-400 text-[11px]">- ไม่มีภาพ -</span>`;
+        if (r.images && r.images.length > 0) {
+            const encoded = encodeURIComponent(JSON.stringify(r.images));
+            imageHtml = `<button onclick="viewMultipleImages('${encoded}')" class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-lg border border-emerald-300 shadow-xs"><i data-lucide="image" class="w-3.5 h-3.5"></i> ดูภาพ (${r.images.length})</button>`;
+        }
+        
+        let statusStyle = 'text-slate-700';
+        if(r.status === 'ผ่านเกณฑ์' || r.status === 'ปลอดภัย') statusStyle = 'text-emerald-700 font-bold bg-emerald-100 px-2 py-0.5 rounded';
+        else if (r.status.includes('เฝ้าระวัง') || r.status.includes('ปรับปรุง') || r.status.includes('ผิดพลาด')) statusStyle = 'text-rose-700 font-bold bg-rose-100 px-2 py-0.5 rounded';
+
+        return `
+        <tr class="border-b hover:bg-slate-50 transition">
+            <td class="p-3 font-mono">${r.date}</td>
+            <td class="p-3 font-bold text-emerald-800">${r.cat}</td>
+            <td class="p-3 font-semibold text-slate-800">${r.point}<br><span class="text-[11px] text-slate-500 font-normal">${r.value}</span></td>
+            <td class="p-3">${imageHtml}</td>
+            <td class="p-3 font-medium"><span class="${statusStyle}">${r.status}</span></td>
+        </tr>
+    `}).join('');
+    lucide.createIcons();
+}
+
+function saveHistoryToStorage() {
+    if(currentApiUrl === "") {
+        try { localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(historyRecords)); } catch(e){}
+    }
+}
+
+async function loadHistoryFromStorage() {
+    if (currentApiUrl !== "") {
+        // --- ONLINE MODE (Fetch from Google Sheets) ---
+        showLoading(true, 'กำลังดึงข้อมูลล่าสุดจากฐานข้อมูล...');
+        try {
+            const response = await fetch(currentApiUrl);
+            const data = await response.json();
+            historyRecords = data;
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            showToast('เชื่อมต่อฐานข้อมูลล้มเหลว แสดงข้อมูลออฟไลน์');
+            loadOfflineData();
+        } finally {
+            showLoading(false);
+            renderHistoryTable();
+        }
+    } else {
+        // --- OFFLINE MODE ---
+        loadOfflineData();
+        renderHistoryTable();
+    }
+}
+
+function loadOfflineData() {
+    try {
+        const stored = localStorage.getItem(STORAGE_KEY_HISTORY);
+        if(stored) historyRecords = JSON.parse(stored);
+        else historyRecords = [...defaultMockHistory];
+    } catch(e) {
+        historyRecords = [...defaultMockHistory];
+    }
+}
+
+function clearHistoryData() {
+    if (currentApiUrl !== "") {
+        alert("ในโหมดออนไลน์ (คลาวด์) ไม่สามารถลบข้อมูลจากแอปได้ กรุณาลบโดยตรงที่ไฟล์ Google Sheets ครับ");
+        return;
+    }
+    historyRecords = [];
+    saveHistoryToStorage();
+    renderHistoryTable();
+    showToast('ล้างประวัติเรียบร้อยแล้ว');
+}
+
+function exportToCSV() {
+    if(historyRecords.length === 0) { showToast('ไม่มีข้อมูล'); return; }
+    const headers = ['วันที่', 'หมวดงาน', 'จุดตรวจ/ข้อมูล', 'สถานะ', 'ผู้บันทึก'];
+    const rows = historyRecords.map(r => [`"${r.date}"`, `"${r.cat}"`, `"${r.point} - ${r.value}"`, `"${r.status}"`, `"${r.recorder}"`]);
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `MaeAi_Env_Records_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    showToast('ส่งออก CSV สำเร็จ');
+}
+
+function showToast(msg) {
+    const toast = document.getElementById('toast');
+    const txt = document.getElementById('toastMessage');
+    if(txt) txt.innerText = msg;
+    if(toast) {
+        toast.classList.remove('translate-y-20', 'opacity-0');
+        setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
+    }
+}
+
+function openScanModal() { document.getElementById('scanModal').classList.remove('hidden'); renderSelectedQrCode(); }
+function closeScanModal() { document.getElementById('scanModal').classList.add('hidden'); }
+function openResetModal() { document.getElementById('resetModal').classList.remove('hidden'); }
+function closeResetModal() { document.getElementById('resetModal').classList.add('hidden'); }
+function resetToProduction() {
+    historyRecords = [];
+    saveHistoryToStorage();
+    renderHistoryTable();
+    closeResetModal();
+    showToast('รีเซ็ตระบบพร้อมเริ่มบันทึกจริงเรียบร้อย');
+}
+
+function renderSelectedQrCode() {
+    const point = document.getElementById('qrPointSelect')?.value || 'M-01';
+    const title = document.getElementById('qrCardTitle');
+    const preview = document.getElementById('qrFullUrlPreview');
+    const img = document.getElementById('qrGeneratedImg');
+    const url = window.location.href.split('?')[0] + `?point=${point}`;
+    if(title) title.innerText = `จุดตรวจประจำจุด: ${point}`;
+    if(preview) preview.innerText = url;
+    if(img) img.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(url)}`;
+}
+
+function downloadQrImage() {
+    const img = document.getElementById('qrGeneratedImg');
+    if(!img) return;
+    const a = document.createElement('a');
+    a.href = img.src;
+    a.download = `QR_Code_MaeAi.png`;
+    a.target = '_blank';
+    a.click();
+    showToast('ดาวน์โหลดรูป QR สำเร็จ');
+}
+
+function updateTs2Report() {
+    const sel = document.getElementById('ts2MonthSelect');
+    const txt = sel ? sel.options[sel.selectedIndex].text : 'ตุลาคม 2569';
+    const header = document.getElementById('ts2HeaderMonth');
+    if(header) header.innerText = txt;
+}
+
+function copyFullTs2Text() {
+    const text = `[รายงาน ทส.2 กรมควบคุมมลพิษ - โรงพยาบาลแม่อาย] ประจำเดือน\n1. ชื่อสถานบริการ: โรงพยาบาลแม่อาย (ประเภท ก)\n2. สรุปปริมาณน้ำใช้: 4,275.0 ลบ.ม.\n3. ชั่วโมงปั๊มสูบรวม: 195.0 ชม.\n4. น้ำเสียเข้าระบบรวม: 3,115.1 ลบ.ม.\n5. ไฟฟ้าบำบัด: 1,440.0 หน่วย`;
+    const temp = document.createElement('textarea');
+    temp.value = text;
+    document.body.appendChild(temp);
+    temp.select();
+    document.execCommand('copy');
+    document.body.removeChild(temp);
+    showToast('คัดลอกสรุป ทส.2 เรียบร้อย');
+}
+
+function initCharts() {
+    const cWater = document.getElementById('chartWaterTrend')?.getContext('2d');
+    if (cWater) chartWater = new Chart(cWater, { type: 'line', data: { labels: ['3 ต.ค.', '4 ต.ค.', '5 ต.ค.', '6 ต.ค.', '7 ต.ค.', '8 ต.ค.', '9 ต.ค.'], datasets: [{ label: 'ปริมาณใช้น้ำ', data: [135.2, 140.0, 138.5, 145.1, 132.8, 146.3, 142.5], borderColor: '#0284c7', backgroundColor: 'rgba(2, 132, 199, 0.1)', fill: true, tension: 0.35, borderWidth: 2.5 }, { label: 'เกณฑ์ 170', data: [170,170,170,170,170,170,170], borderColor: '#ef4444', borderDash: [5,5], borderWidth: 1.5, fill: false, pointRadius: 0 }] }, options: { responsive: true, maintainAspectRatio: false } });
+
+    const cWaste = document.getElementById('chartWastePie')?.getContext('2d');
+    if(cWaste) chartWastePie = new Chart(cWaste, { type: 'doughnut', data: { labels: ['ทั่วไป', 'รีไซเคิล', 'อินทรีย์', 'อันตราย', 'ติดเชื้อ'], datasets: [{ data: [1365.0, 546.0, 720.0, 96.0, 582.0], backgroundColor: ['#3b82f6', '#10b981', '#22c55e', '#f59e0b', '#f43f5e']}] }, options: { responsive: true, maintainAspectRatio: false } });
+
+    const cWwts = document.getElementById('chartWwts')?.getContext('2d');
+    if (cWwts) chartWwts = new Chart(cWwts, { type: 'bar', data: { labels: ['3 ต.ค.', '4 ต.ค.', '5 ต.ค.', '6 ต.ค.', '7 ต.ค.', '8 ต.ค.', '9 ต.ค.'], datasets: [ { type: 'bar', label: 'น้ำเสีย (ลบ.ม.)', data: [99.0, 102.2, 95.8, 107.0, 94.3, 105.4, 103.8], backgroundColor: 'rgba(20, 184, 166, 0.65)', borderColor: '#0f766e', borderWidth: 1, yAxisID: 'y' }, { type: 'line', label: 'DO (mg/L)', data: [2.5, 2.7, 2.4, 2.9, 2.6, 2.5, 2.8], borderColor: '#059669', borderWidth: 2, yAxisID: 'y1'}, { type: 'line', label: 'pH', data: [7.3, 7.4, 7.2, 7.5, 7.3, 7.2, 7.4], borderColor: '#8b5cf6', borderWidth: 2, yAxisID: 'y1'}, { type: 'line', label: 'คลอรีน (mg/L)', data: [0.45, 0.50, 0.48, 0.55, 0.52, 0.49, 0.50], borderColor: '#0284c7', borderWidth: 2, yAxisID: 'y1'} ] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { type: 'linear', position: 'left' }, y1: { type: 'linear', position: 'right', grid: { drawOnChartArea: false }, min: 0, max: 10 } } } });
+
+    const cMaint = document.getElementById('chartMaintBar')?.getContext('2d');
+    if(cMaint) chartMaintBar = new Chart(cMaint, { type: 'bar', data: { labels: ['ประปา', 'บำบัดน้ำเสีย', 'ห้องขยะ', 'ความปลอดภัย'], datasets: [{ label: 'จำนวน', data: [5, 3, 2, 1], backgroundColor: '#6366f1'}] }, options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false }});
+}
+</script>
+</body>
+</html>
