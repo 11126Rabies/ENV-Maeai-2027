@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ระบบบันทึกข้อมูลด้านสิ่งแวดล้อม โรงพยาบาลแม่อาย (Version 1.3.0)</title>
+<title>ระบบบันทึกข้อมูลด้านสิ่งแวดล้อม โรงพยาบาลแม่อาย (Version 1.4.1)</title>
 
 <!-- Tailwind CSS -->
 <script src="https://cdn.tailwindcss.com"></script>
@@ -100,7 +100,11 @@ input[readonly] {
                     <div class="flex items-center gap-2.5 flex-wrap">
                         <span class="bg-emerald-500/35 text-emerald-100 text-xs sm:text-sm px-3 py-0.5 rounded-full border border-emerald-400/40 font-semibold shadow-xs">GREEN & CLEAN Hospital</span>
                         <span class="bg-amber-400 text-slate-900 text-xs sm:text-sm px-3 py-0.5 rounded-full font-bold shadow-sm tracking-wide flex items-center gap-1">
-                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Version 1.3.0
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Version 1.4.1
+                        </span>
+                        <!-- NEW: ไฟสถานะการเชื่อมต่อฐานข้อมูล -->
+                        <span id="dbConnectionStatus" class="text-xs sm:text-sm font-bold px-3 py-0.5 rounded-full shadow-sm flex items-center gap-1.5 transition-colors">
+                            <span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-slate-500"></span></span> โหลดสถานะ...
                         </span>
                         <span id="liveClock" class="text-xs sm:text-sm text-emerald-100/90 font-mono hidden md:inline-block"></span>
                     </div>
@@ -1608,6 +1612,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const apiInput = document.getElementById('apiUrlInput');
     if(apiInput) apiInput.value = currentApiUrl;
 
+    updateConnectionStatusUI(); // เรียกใช้งานระบบเช็กสถานะตอนเปิดเว็บ
+
     renderHasTable();
     loadHistoryFromStorage();
     initCharts();
@@ -2176,6 +2182,7 @@ function saveApiUrl() {
         localStorage.setItem(STORAGE_KEY_API, url);
         currentApiUrl = url;
         showToast('บันทึกลิงก์ฐานข้อมูลเรียบร้อยแล้ว');
+        updateConnectionStatusUI(); // อัปเดตไฟสถานะทันทีเมื่อกดบันทึก
         if(url !== "") loadHistoryFromStorage(); 
     }
 }
@@ -2349,6 +2356,21 @@ function resetToProduction() {
     renderDashboardLists();
     closeResetModal();
     showToast('รีเซ็ตระบบพร้อมเริ่มบันทึกจริงเรียบร้อย');
+}
+
+// ฟังก์ชันอัปเดตป้ายไฟสถานะ (เขียว = คลาวด์, แดง = ออฟไลน์)
+function updateConnectionStatusUI() {
+    const statusEl = document.getElementById('dbConnectionStatus');
+    if (!statusEl) return;
+    if (currentApiUrl && currentApiUrl.trim() !== "") {
+        // สถานะ Online (มีลิงก์ API)
+        statusEl.className = "text-[11px] sm:text-xs text-emerald-900 bg-emerald-300 font-bold px-2.5 py-0.5 rounded-full shadow-sm flex items-center gap-1.5 border border-emerald-400";
+        statusEl.innerHTML = '<span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-100 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-600"></span></span> <span class="hidden sm:inline">เชื่อมต่อคลาวด์แล้ว</span><span class="sm:hidden">Online</span>';
+    } else {
+        // สถานะ Offline (ไม่มีลิงก์ API)
+        statusEl.className = "text-[11px] sm:text-xs text-rose-900 bg-rose-200 font-bold px-2.5 py-0.5 rounded-full shadow-sm flex items-center gap-1.5 border border-rose-300";
+        statusEl.innerHTML = '<span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-100 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span></span> <span class="hidden sm:inline">ออฟไลน์ (เก็บในเครื่อง)</span><span class="sm:hidden">Offline</span>';
+    }
 }
 
 function renderSelectedQrCode() {
