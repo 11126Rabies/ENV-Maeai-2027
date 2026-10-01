@@ -102,7 +102,7 @@ input[readonly] {
                         <span class="bg-amber-400 text-slate-900 text-xs sm:text-sm px-3 py-0.5 rounded-full font-bold shadow-sm tracking-wide flex items-center gap-1">
                             <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Version 1.4.1
                         </span>
-                        <!-- NEW: ไฟสถานะการเชื่อมต่อฐานข้อมูล -->
+                        <!-- ไฟสถานะการเชื่อมต่อฐานข้อมูล -->
                         <span id="dbConnectionStatus" class="text-xs sm:text-sm font-bold px-3 py-0.5 rounded-full shadow-sm flex items-center gap-1.5 transition-colors">
                             <span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-slate-500"></span></span> โหลดสถานะ...
                         </span>
@@ -286,7 +286,7 @@ input[readonly] {
             </div>
         </div>
 
-        <!-- NEW: Dynamic Lists for Lab, Safety, and Maintenance Records -->
+        <!-- Dynamic Lists for Lab, Safety, and Maintenance Records -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
             <!-- Lab Wastewater -->
             <div class="eco-float-card p-4 flex flex-col bg-white">
@@ -294,8 +294,8 @@ input[readonly] {
                     <h3 class="font-bold text-slate-800 text-sm flex items-center gap-1.5"><i data-lucide="flask-conical" class="w-4 h-4 text-purple-600"></i> 🔬 ผลตรวจแล็บน้ำทิ้งบำบัด</h3>
                     <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-bold">3 ล่าสุด</span>
                 </div>
-                <div id="dashListLabWwts" class="space-y-2.5 flex-1 overflow-y-auto custom-scroll max-h-[220px]">
-                    <!-- Injected via JS -->
+                <div id="dashListLabWwts" class="space-y-2.5 flex-1 overflow-y-auto custom-scroll max-h-[300px]">
+                    <!-- Injected via JS with Mini Table -->
                 </div>
             </div>
             <!-- Lab Tap Water -->
@@ -304,8 +304,8 @@ input[readonly] {
                     <h3 class="font-bold text-slate-800 text-sm flex items-center gap-1.5"><i data-lucide="droplet" class="w-4 h-4 text-blue-600"></i> 🔬 ผลตรวจแล็บน้ำประปา รพ.</h3>
                     <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-bold">3 ล่าสุด</span>
                 </div>
-                <div id="dashListLabWater" class="space-y-2.5 flex-1 overflow-y-auto custom-scroll max-h-[220px]">
-                    <!-- Injected via JS -->
+                <div id="dashListLabWater" class="space-y-2.5 flex-1 overflow-y-auto custom-scroll max-h-[300px]">
+                    <!-- Injected via JS with Mini Table -->
                 </div>
             </div>
             <!-- Lab Sludge/Parasites -->
@@ -314,8 +314,8 @@ input[readonly] {
                     <h3 class="font-bold text-slate-800 text-sm flex items-center gap-1.5"><i data-lucide="microscope" class="w-4 h-4 text-amber-600"></i> 🔬 ผลตรวจกากตะกอน (ไข่พยาธิ)</h3>
                     <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-bold">3 ล่าสุด</span>
                 </div>
-                <div id="dashListLabSludge" class="space-y-2.5 flex-1 overflow-y-auto custom-scroll max-h-[220px]">
-                    <!-- Injected via JS -->
+                <div id="dashListLabSludge" class="space-y-2.5 flex-1 overflow-y-auto custom-scroll max-h-[300px]">
+                    <!-- Injected via JS with Mini Table -->
                 </div>
             </div>
         </div>
@@ -592,7 +592,7 @@ input[readonly] {
                         </div>
                     </div>
 
-                    <!-- Up to 5 Image Uploads -->
+                    <!-- Image Uploads -->
                     <div class="bg-slate-100 p-4 rounded-2xl border-2 border-slate-300 space-y-2">
                         <label class="block text-xs font-bold text-slate-700 flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4 text-emerald-700"></i> แนบภาพถ่ายหลักฐานหน้างาน (แนบได้ไม่เกิน 5 ภาพ)</label>
                         <input type="file" accept="image/*" multiple id="waterImageFile" onchange="handleMultipleImages(this, 'waterImgPreview', 'water')" class="w-full text-xs text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-700 file:text-white hover:file:bg-emerald-800 cursor-pointer">
@@ -728,7 +728,7 @@ input[readonly] {
                         </div>
                     </div>
 
-                    <!-- Up to 5 Image Uploads -->
+                    <!-- Image Uploads -->
                     <div class="bg-slate-100 p-4 rounded-2xl border-2 border-slate-300 space-y-2">
                         <label class="block text-xs font-bold text-slate-700 flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4 text-teal-700"></i> แนบภาพถ่ายหลักฐานหน้างาน (แนบได้ไม่เกิน 5 ภาพ)</label>
                         <input type="file" accept="image/*" multiple id="wwtsImageFile" onchange="handleMultipleImages(this, 'wwtsImgPreview', 'wwts')" class="w-full text-xs text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-teal-700 file:text-white hover:file:bg-teal-800 cursor-pointer">
@@ -870,7 +870,7 @@ input[readonly] {
                         </div>
                     </div>
 
-                    <!-- Up to 5 Image Uploads -->
+                    <!-- Image Uploads -->
                     <div class="bg-slate-100 p-4 rounded-2xl border-2 border-slate-300 space-y-2">
                         <label class="block text-xs font-bold text-slate-700 flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4 text-amber-700"></i> แนบภาพถ่ายหลักฐานหน้างาน (แนบได้ไม่เกิน 5 ภาพ)</label>
                         <input type="file" accept="image/*" multiple id="wasteImageFile" onchange="handleMultipleImages(this, 'wasteImgPreview', 'waste')" class="w-full text-xs text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-700 cursor-pointer">
@@ -949,7 +949,7 @@ input[readonly] {
                         <textarea id="safetyDetail" rows="3" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl p-3 text-sm font-semibold text-slate-900 focus:bg-white" placeholder="ระบุรายละเอียด และแนวทางการป้องกันการเกิดซ้ำ ..."></textarea>
                     </div>
 
-                    <!-- Up to 5 Image Uploads -->
+                    <!-- Image Uploads -->
                     <div class="bg-slate-100 p-4 rounded-2xl border-2 border-slate-300 space-y-2">
                         <label class="block text-xs font-bold text-slate-700 flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4 text-rose-700"></i> แนบภาพถ่ายหลักฐานเหตุการณ์ (แนบได้ไม่เกิน 5 ภาพ)</label>
                         <input type="file" accept="image/*" multiple id="safetyImageFile" onchange="handleMultipleImages(this, 'safetyImgPreview', 'safety')" class="w-full text-xs text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-rose-700 file:text-white hover:file:bg-rose-800 cursor-pointer">
@@ -1000,7 +1000,7 @@ input[readonly] {
                     </div>
                     <div><label class="block text-xs font-bold text-slate-700 mb-1.5">การแก้ไขปัญหา (Action Taken)</label><textarea id="maintAction" class="w-full bg-slate-50 border-2 border-slate-700 rounded-xl p-3 text-sm font-semibold" required></textarea></div>
 
-                    <!-- Up to 5 Image Uploads -->
+                    <!-- Image Uploads -->
                     <div class="bg-slate-100 p-4 rounded-2xl border-2 border-slate-300 space-y-2">
                         <label class="block text-xs font-bold text-slate-700 flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4 text-indigo-700"></i> แนบภาพถ่ายหลักฐานการซ่อมบำรุง (แนบได้ไม่เกิน 5 ภาพ)</label>
                         <input type="file" accept="image/*" multiple id="maintImageFile" onchange="handleMultipleImages(this, 'maintImgPreview', 'maint')" class="w-full text-xs text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-700 file:text-white hover:file:bg-indigo-800 cursor-pointer">
@@ -1084,7 +1084,6 @@ input[readonly] {
                 </p>
             </div>
 
-            <!-- Section 1 -->
             <div class="space-y-3">
                 <h3 class="font-bold text-xs text-emerald-950 uppercase tracking-wider flex items-center gap-2 pb-1.5 border-b-2 border-emerald-600/30">
                     <i data-lucide="building-2" class="w-4.5 h-4.5 text-emerald-700"></i> ส่วนที่ 1 : ข้อมูลทั่วไปของแหล่งกำเนิดมลพิษ
@@ -1117,7 +1116,6 @@ input[readonly] {
                 </div>
             </div>
 
-            <!-- Section 2 -->
             <div class="space-y-3">
                 <div class="flex items-center justify-between pb-1.5 border-b-2 border-teal-600/30">
                     <h3 class="font-bold text-xs text-teal-950 uppercase tracking-wider flex items-center gap-2">
@@ -1154,7 +1152,6 @@ input[readonly] {
                 </div>
             </div>
 
-            <!-- Signature Section -->
             <div class="pt-5 border-t-2 border-emerald-600/30 grid grid-cols-1 sm:grid-cols-2 gap-6 text-xs">
                 <div class="space-y-1">
                     <span class="text-slate-600 text-[11px] font-bold block">คำรับรองความถูกต้อง:</span>
@@ -1210,46 +1207,46 @@ input[readonly] {
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300">
                         <label class="block text-[11px] font-bold text-slate-700 mb-1">pH <span class="text-[9px] text-slate-500">(5.5-9.0)</span></label>
-                        <input type="number" step="0.01" id="labWwts_ph" class="w-full bg-slate-50 border-2 border-slate-400 rounded-lg px-2 py-1.5 text-sm font-mono font-bold">
+                        <input type="text" id="labWwts_ph" class="w-full bg-slate-50 border-2 border-slate-400 rounded-lg px-2 py-1.5 text-sm font-mono font-bold" placeholder="เช่น 7.50">
                     </div>
                     <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300">
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">BOD <span class="text-[9px] text-slate-500">(≤20 mg/L)</span></label>
-                        <input type="number" step="0.01" id="labWwts_bod" class="w-full bg-slate-50 border-2 border-slate-400 rounded-lg px-2 py-1.5 text-sm font-mono font-bold">
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">BOD <span class="text-[9px] text-slate-500">(≤20)</span></label>
+                        <input type="text" id="labWwts_bod" class="w-full bg-slate-50 border-2 border-slate-400 rounded-lg px-2 py-1.5 text-sm font-mono font-bold" placeholder="เช่น 3.00">
                     </div>
                     <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300">
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">SS <span class="text-[9px] text-slate-500">(≤30 mg/L)</span></label>
-                        <input type="number" step="0.01" id="labWwts_ss" class="w-full bg-slate-50 border-2 border-slate-400 rounded-lg px-2 py-1.5 text-sm font-mono font-bold">
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">SS <span class="text-[9px] text-slate-500">(≤30)</span></label>
+                        <input type="text" id="labWwts_ss" class="w-full bg-slate-50 border-2 border-slate-400 rounded-lg px-2 py-1.5 text-sm font-mono font-bold" placeholder="เช่น 8.00">
                     </div>
                     <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300">
                         <label class="block text-[11px] font-bold text-slate-700 mb-1">TDS <span class="text-[9px] text-slate-500">(≤1000)</span></label>
-                        <input type="number" step="0.01" id="labWwts_tds" class="w-full bg-slate-50 border-2 border-slate-400 rounded-lg px-2 py-1.5 text-sm font-mono font-bold">
+                        <input type="text" id="labWwts_tds" class="w-full bg-slate-50 border-2 border-slate-400 rounded-lg px-2 py-1.5 text-sm font-mono font-bold" placeholder="เช่น 504.00">
                     </div>
                     <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300">
                         <label class="block text-[11px] font-bold text-slate-700 mb-1">Oil & Grease <span class="text-[9px] text-slate-500">(≤20)</span></label>
-                        <input type="number" step="0.01" id="labWwts_oil" class="w-full bg-slate-50 border-2 border-slate-400 rounded-lg px-2 py-1.5 text-sm font-mono font-bold">
+                        <input type="text" id="labWwts_oil" class="w-full bg-slate-50 border-2 border-slate-400 rounded-lg px-2 py-1.5 text-sm font-mono font-bold" placeholder="เช่น 3.33">
                     </div>
                     <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300">
                         <label class="block text-[11px] font-bold text-slate-700 mb-1">TKN <span class="text-[9px] text-slate-500">(≤35)</span></label>
-                        <input type="number" step="0.01" id="labWwts_tkn" class="w-full bg-slate-50 border-2 border-slate-400 rounded-lg px-2 py-1.5 text-sm font-mono font-bold">
+                        <input type="text" id="labWwts_tkn" class="w-full bg-slate-50 border-2 border-slate-400 rounded-lg px-2 py-1.5 text-sm font-mono font-bold" placeholder="เช่น 11.14">
                     </div>
                     <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300">
                         <label class="block text-[11px] font-bold text-slate-700 mb-1">Sulfide <span class="text-[9px] text-slate-500">(≤1.0)</span></label>
-                        <input type="number" step="0.01" id="labWwts_sulfide" class="w-full bg-slate-50 border-2 border-slate-400 rounded-lg px-2 py-1.5 text-sm font-mono font-bold">
+                        <input type="text" id="labWwts_sulfide" class="w-full bg-slate-50 border-2 border-slate-400 rounded-lg px-2 py-1.5 text-sm font-mono font-bold" placeholder="เช่น < 1.0">
                     </div>
                     <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300">
                         <label class="block text-[11px] font-bold text-slate-700 mb-1">Chlorine <span class="text-[9px] text-slate-500">(≤1.0)</span></label>
-                        <input type="number" step="0.01" id="labWwts_cl2" class="w-full bg-slate-50 border-2 border-slate-400 rounded-lg px-2 py-1.5 text-sm font-mono font-bold">
+                        <input type="text" id="labWwts_cl2" class="w-full bg-slate-50 border-2 border-slate-400 rounded-lg px-2 py-1.5 text-sm font-mono font-bold" placeholder="เช่น 1.72">
                     </div>
                 </div>
                 <h4 class="font-bold text-teal-900 text-xs mt-3 mb-1">ด้านชีวภาพ</h4>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300">
-                        <label class="block text-[11px] font-bold text-slate-700 mb-1">E. coli <span class="text-[9px] text-slate-500">(<1000 MPN)</span></label>
-                        <input type="text" id="labWwts_ecoli" class="w-full bg-slate-50 border-2 border-slate-400 rounded-lg px-2 py-1.5 text-sm font-mono font-bold" placeholder="เช่น < 1.8">
-                    </div>
-                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300">
                         <label class="block text-[11px] font-bold text-slate-700 mb-1">Total Coliform <span class="text-[9px] text-slate-500">(<5000)</span></label>
                         <input type="text" id="labWwts_tc" class="w-full bg-slate-50 border-2 border-slate-400 rounded-lg px-2 py-1.5 text-sm font-mono font-bold" placeholder="เช่น < 1.8">
+                    </div>
+                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300">
+                        <label class="block text-[11px] font-bold text-slate-700 mb-1">Fecal Coliform <span class="text-[9px] text-slate-500">(<1000)</span></label>
+                        <input type="text" id="labWwts_fc" class="w-full bg-slate-50 border-2 border-slate-400 rounded-lg px-2 py-1.5 text-sm font-mono font-bold" placeholder="เช่น < 1.8">
                     </div>
                     <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300">
                         <label class="block text-[11px] font-bold text-slate-700 mb-1">ไข่หนอนพยาธิ <span class="text-[9px] text-slate-500">(<1)</span></label>
@@ -1265,34 +1262,34 @@ input[readonly] {
             <div id="labSection-water" class="space-y-4 hidden">
                 <h3 class="font-bold text-blue-900 text-sm border-b-2 border-blue-200 pb-2 flex items-center gap-2"><i data-lucide="droplet" class="w-4 h-4 text-blue-600"></i> พารามิเตอร์น้ำประปา รพ. (กายภาพ เคมี และโลหะหนัก)</h3>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">pH (6.5-8.5)</label><input type="number" step="0.01" id="labTap_ph" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono"></div>
-                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">ความขุ่น (≤5 NTU)</label><input type="number" step="0.01" id="labTap_turb" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono"></div>
-                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">สี (≤15 Pt-Co)</label><input type="number" step="0.01" id="labTap_color" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono"></div>
-                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">ความกระด้าง (≤300)</label><input type="number" step="0.1" id="labTap_hard" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono"></div>
-                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">TDS (≤500)</label><input type="number" step="0.01" id="labTap_tds" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono"></div>
-                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">คลอไรด์ (≤250)</label><input type="number" step="0.01" id="labTap_cl" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono"></div>
-                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">ซัลเฟต (≤250)</label><input type="number" step="0.01" id="labTap_so4" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono"></div>
-                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">ฟลูออไรด์ (≤0.7)</label><input type="number" step="0.01" id="labTap_f" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono"></div>
-                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">ไนเตรท (≤50)</label><input type="number" step="0.01" id="labTap_no3" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono"></div>
-                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">ไนไตรท์ (≤3)</label><input type="number" step="0.01" id="labTap_no2" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono"></div>
+                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">pH (6.5-8.5)</label><input type="text" id="labTap_ph" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="เช่น 7.50"></div>
+                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">ความขุ่น (≤5)</label><input type="text" id="labTap_turb" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="เช่น < 1.00"></div>
+                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">สี (≤15)</label><input type="text" id="labTap_color" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="เช่น 0.27"></div>
+                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">ความกระด้าง (≤300)</label><input type="text" id="labTap_hard" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="เช่น 63.0"></div>
+                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">TDS (≤500)</label><input type="text" id="labTap_tds" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="เช่น 105.50"></div>
+                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">คลอไรด์ (≤250)</label><input type="text" id="labTap_cl" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="เช่น 5.00"></div>
+                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">ซัลเฟต (≤250)</label><input type="text" id="labTap_so4" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="เช่น < 5.00"></div>
+                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">ฟลูออไรด์ (≤0.7)</label><input type="text" id="labTap_f" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="เช่น 0.39"></div>
+                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">ไนเตรท (≤50)</label><input type="text" id="labTap_no3" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="เช่น 1.84"></div>
+                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">ไนไตรท์ (≤3)</label><input type="text" id="labTap_no2" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="เช่น Not Detected"></div>
                 </div>
                 <h4 class="font-bold text-blue-900 text-xs mt-3 mb-1">โลหะหนัก (Heavy Metals)</h4>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">As (≤0.01)</label><input type="text" id="labTap_as" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="0.0021"></div>
-                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">Cd (≤0.003)</label><input type="text" id="labTap_cd" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="ND"></div>
-                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">Cr (≤0.05)</label><input type="text" id="labTap_cr" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="ND"></div>
-                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">Pb (≤0.01)</label><input type="text" id="labTap_pb" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="ND"></div>
-                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">Hg (≤0.001)</label><input type="text" id="labTap_hg" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="ND"></div>
+                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">Cd (≤0.003)</label><input type="text" id="labTap_cd" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="Not Detected"></div>
+                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">Cr (≤0.05)</label><input type="text" id="labTap_cr" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="Not Detected"></div>
+                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">Pb (≤0.01)</label><input type="text" id="labTap_pb" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="Not Detected"></div>
+                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">Hg (≤0.001)</label><input type="text" id="labTap_hg" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="Not Detected"></div>
                     <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">Fe (≤0.3)</label><input type="text" id="labTap_fe" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="0.052"></div>
-                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">Mn (≤0.3)</label><input type="text" id="labTap_mn" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="ND"></div>
+                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">Mn (≤0.3)</label><input type="text" id="labTap_mn" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="< 0.0050"></div>
                     <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">Zn (≤3.0)</label><input type="text" id="labTap_zn" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="0.024"></div>
-                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">Cu (≤1.0)</label><input type="text" id="labTap_cu" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="ND"></div>
+                    <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300"><label class="block text-[10px] font-bold text-slate-700 mb-1">Cu (≤1.0)</label><input type="text" id="labTap_cu" class="w-full border-2 border-slate-400 rounded-lg px-2 py-1 text-sm font-mono" placeholder="< 0.0050"></div>
                 </div>
                 <h4 class="font-bold text-blue-900 text-xs mt-3 mb-1">ด้านชีวภาพ</h4>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300">
                         <label class="block text-[11px] font-bold text-slate-700 mb-1">Total Coliform <span class="text-[9px] text-slate-500">(<1.1 MPN)</span></label>
-                        <input type="text" id="labTap_tc" class="w-full bg-slate-50 border-2 border-slate-400 rounded-lg px-2 py-1.5 text-sm font-mono font-bold" placeholder="เช่น >23">
+                        <input type="text" id="labTap_tc" class="w-full bg-slate-50 border-2 border-slate-400 rounded-lg px-2 py-1.5 text-sm font-mono font-bold" placeholder="เช่น > 23">
                     </div>
                     <div class="bg-white p-2.5 rounded-xl border-2 border-slate-300">
                         <label class="block text-[11px] font-bold text-slate-700 mb-1">E. coli <span class="text-[9px] text-slate-500">(<1.1 MPN)</span></label>
@@ -1319,7 +1316,7 @@ input[readonly] {
                 </div>
             </div>
 
-            <!-- Up to 5 Image Uploads for Lab -->
+            <!-- Image Uploads -->
             <div class="bg-slate-100 p-4 rounded-2xl border-2 border-slate-300 space-y-2">
                 <label class="block text-xs font-bold text-slate-700 flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4 text-purple-700"></i> แนบไฟล์หรือรูปภาพผลแล็บ (แนบได้ไม่เกิน 5 ภาพ)</label>
                 <input type="file" accept="image/*" multiple id="labImageFile" onchange="handleMultipleImages(this, 'labImgPreview', 'lab')" class="w-full text-xs text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-purple-700 file:text-white hover:file:bg-purple-800 cursor-pointer">
@@ -1392,7 +1389,7 @@ input[readonly] {
                     </table>
                 </div>
 
-                <!-- Up to 5 Image Uploads for HAS -->
+                <!-- Image Uploads -->
                 <div class="bg-slate-100 p-4 rounded-2xl border-2 border-slate-300 space-y-2">
                     <label class="block text-xs font-bold text-slate-700 flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4 text-blue-700"></i> แนบภาพถ่ายหลักฐานส้วมสาธารณะ (แนบได้ไม่เกิน 5 ภาพ)</label>
                     <input type="file" accept="image/*" multiple id="hasImageFile" onchange="handleMultipleImages(this, 'hasImgPreview', 'has')" class="w-full text-xs text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-700 file:text-white hover:file:bg-blue-800 cursor-pointer">
@@ -1444,7 +1441,7 @@ input[readonly] {
                     </ol>
                 </div>
 
-                <!-- Up to 5 Image Uploads for A.11 -->
+                <!-- Image Uploads -->
                 <div class="bg-slate-100 p-4 rounded-2xl border-2 border-slate-300 space-y-2">
                     <label class="block text-xs font-bold text-slate-700 flex items-center gap-1.5"><i data-lucide="image" class="w-4 h-4 text-sky-700"></i> แนบภาพถ่ายหลักฐานการตรวจน้ำ (แนบได้ไม่เกิน 5 ภาพ)</label>
                     <input type="file" accept="image/*" multiple id="a11ImageFile" onchange="handleMultipleImages(this, 'a11ImgPreview', 'a11')" class="w-full text-xs text-slate-600 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-sky-700 file:text-white hover:file:bg-sky-800 cursor-pointer">
@@ -1461,6 +1458,22 @@ input[readonly] {
 </main>
 
 <!-- Modals & Toasts -->
+<!-- Lab Detail Modal (For History) -->
+<div id="labDetailModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl max-w-3xl w-full p-5 sm:p-6 shadow-2xl border-2 border-purple-700 flex flex-col max-h-[90vh]">
+        <div class="flex items-center justify-between pb-3 border-b-2 border-slate-100">
+            <h3 class="font-bold text-slate-900 text-base flex items-center gap-2"><i data-lucide="microscope" class="w-5 h-5 text-purple-600"></i> <span id="labDetailTitle">รายละเอียดผลตรวจแล็บ</span></h3>
+            <button onclick="closeLabDetailModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">✕</button>
+        </div>
+        <div class="py-4 flex-1 overflow-y-auto custom-scroll" id="labDetailContent">
+            <!-- Content injected via JS -->
+        </div>
+        <div class="pt-3 border-t-2 border-slate-100 text-center sm:text-right">
+            <button onclick="closeLabDetailModal()" class="bg-slate-700 hover:bg-slate-800 text-white font-bold py-2.5 px-6 rounded-xl text-xs w-full sm:w-auto transition shadow-sm">ปิดหน้าต่าง</button>
+        </div>
+    </div>
+</div>
+
 <!-- Image Viewer Modal (Multi-image support) -->
 <div id="imageModal" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-sm flex items-center justify-center p-4 hidden">
     <div class="bg-white rounded-3xl max-w-4xl w-full p-5 shadow-2xl border-2 border-emerald-700 text-center space-y-4 max-h-[95vh] flex flex-col">
@@ -1547,16 +1560,9 @@ let chartMaintBar = null;
 const STORAGE_KEY_API = 'maeai_api_url';
 let currentApiUrl = localStorage.getItem(STORAGE_KEY_API) || '';
 
-// Multi-image state container (Max 5 per tab)
+// Multi-image state container
 let uploadedImagesState = {
-    water: [],
-    wwts: [],
-    waste: [],
-    safety: [],
-    maint: [],
-    has: [],
-    a11: [],
-    lab: []
+    water: [], wwts: [], waste: [], safety: [], maint: [], has: [], a11: [], lab: []
 };
 
 const WWTS_PUMP_FLOW_RATE = 15.975;
@@ -1591,9 +1597,9 @@ const defaultMockHistory = [
     { date: '2026-10-01', cat: 'จัดการขยะ', point: 'จุดรวมขยะ รพ.แม่อาย', value: 'ติดเชื้อ รพ. 19.4 กก., รับฝาก รพ.สต. 10.2 กก. (รวม 120.5 กก.)', status: 'ผ่านเกณฑ์', recorder: 'นายจีรศักดิ์ นวลดี', images: [] },
     { date: '2026-10-01', cat: 'บำบัดน้ำเสีย', point: 'บ่อสูบน้ำเสีย & บ่อเติมอากาศ', value: 'ปั๊ม 6.5 ชม. (103.8 ลบ.ม.) | DO: 2.8 | คลอรีน: 0.50 mg/L', status: 'ผ่านเกณฑ์', recorder: 'นายจีรศักดิ์ นวลดี', images: [] },
     { date: '2026-10-01', cat: 'ระบบประปา', point: 'มิเตอร์ M-01 น้ำดิบ', value: 'ใช้น้ำ: 142.5 ลบ.ม. (คลอรีน: 0.35 mg/L)', status: 'ผ่านเกณฑ์', recorder: 'นายจีรศักดิ์ นวลดี', images: [] },
-    { date: '2026-08-31', cat: 'ผลตรวจแล็บ', point: 'น้ำทิ้งหลังบำบัด', value: 'BOD: 3.00, pH: 2.98', status: 'เฝ้าระวัง pH', recorder: 'ระบบ', images: [] },
-    { date: '2026-08-31', cat: 'ผลตรวจแล็บ', point: 'กากตะกอนไข่พยาธิ', value: 'ไข่พยาธิ: ไม่พบ, E.coli: 7.4', status: 'ปลอดภัย', recorder: 'ระบบ', images: [] },
-    { date: '2026-05-19', cat: 'ผลตรวจแล็บ', point: 'น้ำประปา รพ.', value: 'Coliform: >23 MPN, pH: 7.50', status: 'พบ Coliform', recorder: 'ระบบ', images: [] },
+    { date: '2026-08-31', cat: 'ผลตรวจแล็บ', point: 'น้ำทิ้งหลังบำบัด', value: 'ผลตรวจล่าสุด TRCM69/19980', status: 'เฝ้าระวัง pH', recorder: 'นายจีรศักดิ์ นวลดี', images: [], raw: { reportNo: 'TRCM69/19980', type: 'น้ำทิ้งหลังบำบัด', tableData: [ {item:'pH', result:'2.98', std:'5.5-9.0', unit:'-'}, {item:'BOD', result:'3.00', std:'≤20', unit:'mg/L'}, {item:'SS', result:'8.00', std:'≤30', unit:'mg/L'}, {item:'TDS', result:'504.0', std:'≤1000', unit:'mg/L'}, {item:'Oil & Grease', result:'3.33', std:'≤20', unit:'mg/L'}, {item:'TKN', result:'11.14', std:'≤35', unit:'mg/L'}, {item:'Sulfide', result:'< 1.0', std:'≤1.0', unit:'mg/L'}, {item:'Chlorine', result:'1.72', std:'≤1.0', unit:'mg/L'}, {item:'Total Coliform', result:'< 1.8', std:'< 5,000', unit:'MPN/100mL'}, {item:'Fecal Coliform', result:'< 1.8', std:'< 1,000', unit:'MPN/100mL'}, {item:'Parasitic Eggs', result:'Not Found', std:'Not Found', unit:'eggs/L'} ] } },
+    { date: '2026-08-31', cat: 'ผลตรวจแล็บ', point: 'กากตะกอนไข่พยาธิ', value: 'ผลตรวจล่าสุด TRCM69/19981', status: 'ปลอดภัย', recorder: 'นายจีรศักดิ์ นวลดี', images: [], raw: { reportNo: 'TRCM69/19981', type: 'กากตะกอนไข่พยาธิ', tableData: [ {item:'Parasitic Eggs', result:'Not Found', std:'Not Found', unit:'eggs/g'}, {item:'E. coli', result:'7.4', std:'< 1,000', unit:'MPN/g'} ] } },
+    { date: '2026-05-19', cat: 'ผลตรวจแล็บ', point: 'น้ำประปา รพ.', value: 'ผลตรวจล่าสุด TRCM69/09163', status: 'พบ Coliform', recorder: 'นายจีรศักดิ์ นวลดี', images: [], raw: { reportNo: 'TRCM69/09163', type: 'น้ำประปา รพ.', tableData: [ {item:'pH', result:'7.50', std:'6.5-8.5', unit:'-'}, {item:'Turbidity', result:'< 1.00', std:'≤5', unit:'NTU'}, {item:'Color', result:'0.27', std:'≤15', unit:'Pt-Co'}, {item:'Total Hardness', result:'63.0', std:'≤300', unit:'mg/L'}, {item:'TDS', result:'105.50', std:'≤500', unit:'mg/L'}, {item:'Chloride', result:'5.00', std:'≤250', unit:'mg/L'}, {item:'Sulfate', result:'< 5.00', std:'≤250', unit:'mg/L'}, {item:'Fluoride', result:'0.39', std:'≤0.7', unit:'mg/L'}, {item:'Nitrate', result:'1.84', std:'≤50', unit:'mg/L'}, {item:'Nitrite', result:'Not Detected', std:'≤3', unit:'mg/L'}, {item:'Arsenic (As)', result:'0.0021', std:'≤0.01', unit:'mg/L'}, {item:'Cadmium (Cd)', result:'Not Detected', std:'≤0.003', unit:'mg/L'}, {item:'Chromium (Cr)', result:'Not Detected', std:'≤0.05', unit:'mg/L'}, {item:'Lead (Pb)', result:'Not Detected', std:'≤0.01', unit:'mg/L'}, {item:'Mercury (Hg)', result:'Not Detected', std:'≤0.001', unit:'mg/L'}, {item:'Iron (Fe)', result:'0.052', std:'≤0.3', unit:'mg/L'}, {item:'Manganese (Mn)', result:'< 0.0050', std:'≤0.3', unit:'mg/L'}, {item:'Zinc (Zn)', result:'0.024', std:'≤3.0', unit:'mg/L'}, {item:'Copper (Cu)', result:'< 0.0050', std:'≤1.0', unit:'mg/L'}, {item:'Total Coliform', result:'> 23', std:'< 1.1', unit:'MPN/100mL'}, {item:'E. coli', result:'< 1.1', std:'< 1.1', unit:'MPN/100mL'} ] } },
     { date: '2026-10-01', cat: 'ความปลอดภัย', point: 'แผนกผู้ป่วยนอก (OPD) (ผู้รายงาน: -)', value: 'หมวดหมู่: ไม่มีอุบัติการณ์ (Zero Incident) | รายละเอียด: -', status: 'ปลอดภัย', recorder: '-', images: [] },
     { date: '2026-09-30', cat: 'ความปลอดภัย', point: 'แผนกซักฟอก (ผู้รายงาน: พนักงาน)', value: 'หมวดหมู่: ลื่นหกล้ม / ตกจากที่สูงใน รพ. | รายละเอียด: ลื่นพื้นเปียก', status: 'เฝ้าระวัง', recorder: 'พนักงาน', images: [] },
     { date: '2026-09-29', cat: 'ซ่อมบำรุง', point: 'ปั๊มคลอรีนน้ำเสีย', value: 'เปลี่ยนหัวฉีด', status: 'เสร็จสิ้น', recorder: 'นายจีรศักดิ์ นวลดี', images: [] },
@@ -1607,13 +1613,10 @@ document.addEventListener('DOMContentLoaded', () => {
      'wasteDate', 'dateRecycle', 'dateInfGen', 'dateInfHaz', 'dateExtInf', 'safetyDate', 'maintDate', 'hasDate', 'a11Date', 'labDate'].forEach(id => {
         const el = document.getElementById(id); if(el) el.value = today;
     });
-    
-    // Set API URL input
     const apiInput = document.getElementById('apiUrlInput');
     if(apiInput) apiInput.value = currentApiUrl;
 
-    updateConnectionStatusUI(); // เรียกใช้งานระบบเช็กสถานะตอนเปิดเว็บ
-
+    updateConnectionStatusUI();
     renderHasTable();
     loadHistoryFromStorage();
     initCharts();
@@ -1654,7 +1657,6 @@ function toggleLabForm() {
     document.getElementById(`labSection-${val}`).classList.remove('hidden');
 }
 
-// Image compression and multi-upload helper
 function compressImage(file, callback) {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -1702,19 +1704,12 @@ function renderImageThumbnails(tabKey, previewId) {
     const previewContainer = document.getElementById(previewId);
     if (!previewContainer) return;
     previewContainer.innerHTML = '';
-    
-    if (uploadedImagesState[tabKey].length === 0) {
-        previewContainer.classList.add('hidden');
-        return;
-    }
+    if (uploadedImagesState[tabKey].length === 0) { previewContainer.classList.add('hidden'); return; }
 
     uploadedImagesState[tabKey].forEach((base64, index) => {
         const wrap = document.createElement('div');
         wrap.className = 'relative inline-block';
-        wrap.innerHTML = `
-            <img src="${base64}" class="h-20 w-20 rounded-xl border-2 border-slate-300 object-cover shadow-sm">
-            <button type="button" onclick="removeImage('${tabKey}', ${index}, '${previewId}')" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center font-bold text-xs shadow-md border-2 border-white hover:bg-rose-600 transition">✕</button>
-        `;
+        wrap.innerHTML = `<img src="${base64}" class="h-20 w-20 rounded-xl border-2 border-slate-300 object-cover shadow-sm"><button type="button" onclick="removeImage('${tabKey}', ${index}, '${previewId}')" class="absolute -top-2 -right-2 w-6 h-6 bg-rose-500 text-white rounded-full flex items-center justify-center font-bold text-xs shadow-md border-2 border-white hover:bg-rose-600 transition">✕</button>`;
         previewContainer.appendChild(wrap);
     });
 }
@@ -1732,41 +1727,26 @@ function viewMultipleImages(encodedImagesStr) {
             const images = JSON.parse(decodeURIComponent(encodedImagesStr));
             container.innerHTML = images.map(src => `<img src="${src}" class="max-w-full rounded-xl border-2 border-slate-300 shadow-md">`).join('');
             modal.classList.remove('hidden');
-        } catch(e) { console.error('Failed to parse images', e); }
+        } catch(e) {}
     }
 }
-function closeImageModal() {
-    const modal = document.getElementById('imageModal');
-    if (modal) modal.classList.add('hidden');
-}
+function closeImageModal() { const modal = document.getElementById('imageModal'); if (modal) modal.classList.add('hidden'); }
 
-// Independent Chemicals & Sections
 function toggleChemical(type) {
     const chk = document.getElementById(type === 'alum' ? 'chkAlum' : 'chkChlorineWater');
     const fields = document.getElementById(type === 'alum' ? 'alumFields' : 'chlorineFields');
     const box = document.getElementById(type === 'alum' ? 'alumBox' : 'chlorineBox');
     if (chk && chk.checked) {
-        fields.classList.remove('opacity-40', 'pointer-events-none');
-        box.classList.replace('border-sky-400', 'border-sky-600');
-        box.classList.add('bg-sky-50');
+        fields.classList.remove('opacity-40', 'pointer-events-none'); box.classList.replace('border-sky-400', 'border-sky-600'); box.classList.add('bg-sky-50');
     } else {
-        fields.classList.add('opacity-40', 'pointer-events-none');
-        box.classList.replace('border-sky-600', 'border-sky-400');
-        box.classList.remove('bg-sky-50');
+        fields.classList.add('opacity-40', 'pointer-events-none'); box.classList.replace('border-sky-600', 'border-sky-400'); box.classList.remove('bg-sky-50');
     }
 }
 
 function toggleWwtsChemical() {
-    const chk = document.getElementById('chkChlorineWwts');
-    const fields = document.getElementById('chlorineWwtsFields');
-    const box = document.getElementById('chlorineWwtsBox');
-    if (chk && chk.checked) {
-        fields.classList.remove('opacity-40', 'pointer-events-none');
-        box.classList.replace('border-indigo-400', 'border-indigo-600');
-    } else {
-        fields.classList.add('opacity-40', 'pointer-events-none');
-        box.classList.replace('border-indigo-600', 'border-indigo-400');
-    }
+    const chk = document.getElementById('chkChlorineWwts'); const fields = document.getElementById('chlorineWwtsFields'); const box = document.getElementById('chlorineWwtsBox');
+    if (chk && chk.checked) { fields.classList.remove('opacity-40', 'pointer-events-none'); box.classList.replace('border-indigo-400', 'border-indigo-600'); } 
+    else { fields.classList.add('opacity-40', 'pointer-events-none'); box.classList.replace('border-indigo-600', 'border-indigo-400'); }
 }
 
 function toggleWasteSection(sectionId) {
@@ -1790,24 +1770,12 @@ function toggleWasteSection(sectionId) {
 }
 
 function renderHasTable() {
-    const tbody = document.getElementById('hasCriteriaTable');
-    if(!tbody) return;
-    let html = '';
-    let globalIndex = 1;
-    hasCriteriaList.forEach((group, gIdx) => {
+    const tbody = document.getElementById('hasCriteriaTable'); if(!tbody) return;
+    let html = ''; let globalIndex = 1;
+    hasCriteriaList.forEach((group) => {
         html += `<tr class="bg-blue-50/50"><td colspan="4" class="p-2 font-bold text-blue-900">${group.cat}</td></tr>`;
-        group.items.forEach((item, iIdx) => {
-            html += `
-            <tr class="hover:bg-slate-50 transition">
-                <td class="p-3 text-center font-bold">${globalIndex}</td>
-                <td class="p-3 text-slate-700">${item}</td>
-                <td class="p-3 text-center">
-                    <input type="radio" name="has_${globalIndex}" value="pass" class="has-radio" checked>
-                </td>
-                <td class="p-3 text-center">
-                    <input type="radio" name="has_${globalIndex}" value="fail" class="has-radio">
-                </td>
-            </tr>`;
+        group.items.forEach((item) => {
+            html += `<tr class="hover:bg-slate-50 transition"><td class="p-3 text-center font-bold">${globalIndex}</td><td class="p-3 text-slate-700">${item}</td><td class="p-3 text-center"><input type="radio" name="has_${globalIndex}" value="pass" class="has-radio" checked></td><td class="p-3 text-center"><input type="radio" name="has_${globalIndex}" value="fail" class="has-radio"></td></tr>`;
             globalIndex++;
         });
     });
@@ -1818,20 +1786,15 @@ function calculateWwtsInflow() {
     const prev = parseFloat(document.getElementById('wwtsPumpPrev')?.value) || 0;
     const todayInput = document.getElementById('wwtsPumpToday');
     const calcBox = document.getElementById('wwtsCalcBox');
-    const label = document.getElementById('wwtsCalcLabel');
-    const val = document.getElementById('wwtsCalcValue');
-    if (!todayInput || todayInput.value.trim() === '') {
-        if (calcBox) calcBox.classList.add('hidden');
-        return { hours: 0, inflowM3: 0 };
-    }
+    if (!todayInput || todayInput.value.trim() === '') { if (calcBox) calcBox.classList.add('hidden'); return { hours: 0, inflowM3: 0 }; }
     const today = parseFloat(todayInput.value);
     if (isNaN(today)) { if (calcBox) calcBox.classList.add('hidden'); return { hours: 0, inflowM3: 0 }; }
     const hours = parseFloat((today - prev).toFixed(1));
     const inflowM3 = parseFloat((hours * WWTS_PUMP_FLOW_RATE).toFixed(1));
     if (calcBox && hours >= 0) {
         calcBox.classList.remove('hidden');
-        if (label) label.innerText = `ปั๊ม ${hours} ชม.:`;
-        if (val) val.innerText = `+${inflowM3} ลบ.ม.`;
+        document.getElementById('wwtsCalcLabel').innerText = `ปั๊ม ${hours} ชม.:`;
+        document.getElementById('wwtsCalcValue').innerText = `+${inflowM3} ลบ.ม.`;
     } else if (calcBox) calcBox.classList.add('hidden');
     return { hours, inflowM3 };
 }
@@ -1840,17 +1803,12 @@ function calculateWwtsElectricity() {
     const prev = parseFloat(document.getElementById('wwtsElectricPrev')?.value) || 0;
     const todayInput = document.getElementById('wwtsElectricToday');
     const box = document.getElementById('wwtsElectricBox');
-    const valEl = document.getElementById('wwtsElectricVal');
-    if (!todayInput || todayInput.value.trim() === '') {
-        if (box) box.classList.add('hidden'); return 0;
-    }
+    if (!todayInput || todayInput.value.trim() === '') { if (box) box.classList.add('hidden'); return 0; }
     const today = parseFloat(todayInput.value);
     if (isNaN(today)) { if (box) box.classList.add('hidden'); return 0; }
     const diff = parseFloat((today - prev).toFixed(1));
-    if (box && diff >= 0) {
-        box.classList.remove('hidden');
-        if(valEl) valEl.innerText = `+${diff} หน่วย (kWh)`;
-    } else if (box) box.classList.add('hidden');
+    if (box && diff >= 0) { box.classList.remove('hidden'); document.getElementById('wwtsElectricVal').innerText = `+${diff} หน่วย (kWh)`; } 
+    else if (box) box.classList.add('hidden');
     return diff;
 }
 
@@ -1865,21 +1823,16 @@ function calcWasteTotal() {
     
     let extInfTotal = 0;
     if (document.getElementById('chkExtInf')?.checked) {
-        const eGen = parseFloat(document.getElementById('valExtInfGen')?.value) || 0;
-        const eHaz = parseFloat(document.getElementById('valExtInfHaz')?.value) || 0;
-        extInfTotal = parseFloat((eGen + eHaz).toFixed(1));
+        extInfTotal = parseFloat(((parseFloat(document.getElementById('valExtInfGen')?.value) || 0) + (parseFloat(document.getElementById('valExtInfHaz')?.value) || 0)).toFixed(1));
     }
     
-    const totalInf = parseFloat((hospInfTotal + extInfTotal).toFixed(1));
-    const grandTotal = parseFloat((g + o + haz + r + totalInf).toFixed(1));
-    
+    const grandTotal = parseFloat((g + o + haz + r + hospInfTotal + extInfTotal).toFixed(1));
     if (document.getElementById('wasteHospInfDisplay')) document.getElementById('wasteHospInfDisplay').innerText = hospInfTotal + ' กก.';
     if (document.getElementById('wasteExtInfDisplay')) document.getElementById('wasteExtInfDisplay').innerText = extInfTotal + ' กก.';
     if (document.getElementById('wasteTotalDisplay')) document.getElementById('wasteTotalDisplay').innerText = grandTotal + ' กก.';
     return { g, o, haz, r, infGen, infHaz, extInfTotal, grandTotal };
 }
 
-// Form Handlers
 function handleWaterSubmit(e) {
     e.preventDefault();
     const curr = document.getElementById('waterCurrent').value;
@@ -1887,191 +1840,56 @@ function handleWaterSubmit(e) {
     const usage = (parseFloat(curr) - parseFloat(prev)).toFixed(1);
     const timeVal = document.getElementById('waterTime')?.value || '08:30';
     addHistoryRow({
-        date: document.getElementById('waterDate').value + ' ' + timeVal,
-        cat: 'ระบบประปา',
-        point: document.getElementById('waterMeterSelect').value,
-        value: `ใช้น้ำ ${curr} ลบ.ม. (จุดตรวจ: ${document.getElementById('waterTestPoint').value})`,
-        status: 'ผ่านเกณฑ์',
-        recorder: 'นายจีรศักดิ์ นวลดี',
-        images: [...uploadedImagesState.water],
-        raw: {
-            currentMeter: curr,
-            waterUsage: usage,
-            chlorine: document.getElementById('waterChlorine').value,
-            ph: document.getElementById('waterPh').value,
-            testPoint: document.getElementById('waterTestPoint').value,
-            alum: '',
-            chlorineAdd: ''
-        }
+        date: document.getElementById('waterDate').value + ' ' + timeVal, cat: 'ระบบประปา', point: document.getElementById('waterMeterSelect').value,
+        value: `ใช้น้ำ ${curr} ลบ.ม. (จุดตรวจ: ${document.getElementById('waterTestPoint').value})`, status: 'ผ่านเกณฑ์', recorder: 'นายจีรศักดิ์ นวลดี', images: [...uploadedImagesState.water],
+        raw: { currentMeter: curr, waterUsage: usage, chlorine: document.getElementById('waterChlorine').value, ph: document.getElementById('waterPh').value, testPoint: document.getElementById('waterTestPoint').value, alum: '', chlorineAdd: '' }
     });
-    
-    if(document.getElementById('chkAlum')?.checked) {
-        addHistoryRow({
-            date: document.getElementById('dateAlum').value,
-            cat: 'ระบบประปา', point: 'เติมสารส้ม', value: `ปริมาณ ${document.getElementById('valAlum').value} กก.`,
-            status: 'เสร็จสิ้น', recorder: 'นายจีรศักดิ์ นวลดี', images: [],
-            raw: { currentMeter: '', waterUsage: '', chlorine: '', ph: '', testPoint: '', alum: document.getElementById('valAlum').value, chlorineAdd: '' }
-        });
-    }
-    if(document.getElementById('chkChlorineWater')?.checked) {
-        addHistoryRow({
-            date: document.getElementById('dateChlorineWater').value,
-            cat: 'ระบบประปา', point: 'เติมคลอรีน', value: `ปริมาณ ${document.getElementById('valChlorineWater').value} ลิตร/กก.`,
-            status: 'เสร็จสิ้น', recorder: 'นายจีรศักดิ์ นวลดี', images: [],
-            raw: { currentMeter: '', waterUsage: '', chlorine: '', ph: '', testPoint: '', alum: '', chlorineAdd: document.getElementById('valChlorineWater').value }
-        });
-    }
-
-    uploadedImagesState.water = [];
-    renderImageThumbnails('water', 'waterImgPreview');
-    showToast(`บันทึกมิเตอร์ประปาสำเร็จ`);
+    if(document.getElementById('chkAlum')?.checked) addHistoryRow({ date: document.getElementById('dateAlum').value, cat: 'ระบบประปา', point: 'เติมสารส้ม', value: `ปริมาณ ${document.getElementById('valAlum').value} กก.`, status: 'เสร็จสิ้น', recorder: 'นายจีรศักดิ์ นวลดี', images: [], raw: { currentMeter: '', waterUsage: '', chlorine: '', ph: '', testPoint: '', alum: document.getElementById('valAlum').value, chlorineAdd: '' } });
+    if(document.getElementById('chkChlorineWater')?.checked) addHistoryRow({ date: document.getElementById('dateChlorineWater').value, cat: 'ระบบประปา', point: 'เติมคลอรีน', value: `ปริมาณ ${document.getElementById('valChlorineWater').value} ลิตร/กก.`, status: 'เสร็จสิ้น', recorder: 'นายจีรศักดิ์ นวลดี', images: [], raw: { currentMeter: '', waterUsage: '', chlorine: '', ph: '', testPoint: '', alum: '', chlorineAdd: document.getElementById('valChlorineWater').value } });
+    uploadedImagesState.water = []; renderImageThumbnails('water', 'waterImgPreview'); showToast('บันทึกมิเตอร์ประปาสำเร็จ');
 }
 
 function handleWwtsSubmit(e) {
     e.preventDefault();
-    const pumpCalc = calculateWwtsInflow();
-    const elecUsage = calculateWwtsElectricity();
-    const doVal = document.getElementById('wwtsDo').value;
+    const pumpCalc = calculateWwtsInflow(); const elecUsage = calculateWwtsElectricity(); const doVal = document.getElementById('wwtsDo').value;
     addHistoryRow({
-        date: document.getElementById('wwtsDate').value,
-        cat: 'น้ำเสีย',
-        point: 'ระบบบำบัด',
-        value: `สูบ ${pumpCalc.inflowM3} ลบ.ม. DO:${doVal}`,
-        status: 'ผ่านเกณฑ์',
-        recorder: 'นายจีรศักดิ์ นวลดี',
-        images: [...uploadedImagesState.wwts],
-        raw: {
-            pumpMeter: document.getElementById('wwtsPumpToday').value,
-            inflow: pumpCalc.inflowM3,
-            elecMeter: document.getElementById('wwtsElectricToday').value,
-            elecUsage: elecUsage,
-            do: doVal,
-            sv30: document.getElementById('wwtsSv30').value,
-            ph: document.getElementById('wwtsPh').value,
-            clEffluent: document.getElementById('wwtsChlorineEffluent').value,
-            clAdd: ''
-        }
+        date: document.getElementById('wwtsDate').value, cat: 'น้ำเสีย', point: 'ระบบบำบัด', value: `สูบ ${pumpCalc.inflowM3} ลบ.ม. DO:${doVal}`, status: 'ผ่านเกณฑ์', recorder: 'นายจีรศักดิ์ นวลดี', images: [...uploadedImagesState.wwts],
+        raw: { pumpMeter: document.getElementById('wwtsPumpToday').value, inflow: pumpCalc.inflowM3, elecMeter: document.getElementById('wwtsElectricToday').value, elecUsage: elecUsage, do: doVal, sv30: document.getElementById('wwtsSv30').value, ph: document.getElementById('wwtsPh').value, clEffluent: document.getElementById('wwtsChlorineEffluent').value, clAdd: '' }
     });
-
-    if(document.getElementById('chkChlorineWwts')?.checked) {
-        addHistoryRow({
-            date: document.getElementById('dateChlorineWwts').value,
-            cat: 'น้ำเสีย', point: 'เติมคลอรีนฆ่าเชื้อ', value: `ปริมาณ ${document.getElementById('valChlorineWwts').value} ลิตร/กก.`,
-            status: 'เสร็จสิ้น', recorder: 'นายจีรศักดิ์ นวลดี', images: [],
-            raw: { pumpMeter: '', inflow: '', elecMeter: '', elecUsage: '', do: '', sv30: '', ph: '', clEffluent: '', clAdd: document.getElementById('valChlorineWwts').value }
-        });
-    }
-
-    uploadedImagesState.wwts = [];
-    renderImageThumbnails('wwts', 'wwtsImgPreview');
-    showToast('บันทึกข้อมูลน้ำเสียเรียบร้อย');
+    if(document.getElementById('chkChlorineWwts')?.checked) addHistoryRow({ date: document.getElementById('dateChlorineWwts').value, cat: 'น้ำเสีย', point: 'เติมคลอรีนฆ่าเชื้อ', value: `ปริมาณ ${document.getElementById('valChlorineWwts').value} ลิตร/กก.`, status: 'เสร็จสิ้น', recorder: 'นายจีรศักดิ์ นวลดี', images: [], raw: { pumpMeter: '', inflow: '', elecMeter: '', elecUsage: '', do: '', sv30: '', ph: '', clEffluent: '', clAdd: document.getElementById('valChlorineWwts').value } });
+    uploadedImagesState.wwts = []; renderImageThumbnails('wwts', 'wwtsImgPreview'); showToast('บันทึกข้อมูลน้ำเสียเรียบร้อย');
 }
 
 function handleWasteSubmit(e) {
-    e.preventDefault();
-    const wCalc = calcWasteTotal();
-    
+    e.preventDefault(); const wCalc = calcWasteTotal();
     addHistoryRow({
-        date: document.getElementById('wasteDate').value,
-        cat: 'จัดการขยะ',
-        point: 'แยก 5 ประเภท',
-        value: `ทั่วไป/อินทรีย์/อันตราย รวม ${(wCalc.g + wCalc.o + wCalc.haz).toFixed(1)} กก.`,
-        status: 'เสร็จสิ้น',
-        recorder: 'นายจีรศักดิ์ นวลดี',
-        images: [...uploadedImagesState.waste],
-        raw: {
-            temp: document.getElementById('wasteTemp').value,
-            general: wCalc.g, organic: wCalc.o, haz: wCalc.haz,
-            recycle: '', recycleInc: '', infGen: '', infHaz: '', extSource: '', extGen: '', extHaz: '', total: wCalc.grandTotal
-        }
+        date: document.getElementById('wasteDate').value, cat: 'จัดการขยะ', point: 'แยก 5 ประเภท', value: `ทั่วไป/อินทรีย์/อันตราย รวม ${(wCalc.g + wCalc.o + wCalc.haz).toFixed(1)} กก.`, status: 'เสร็จสิ้น', recorder: 'นายจีรศักดิ์ นวลดี', images: [...uploadedImagesState.waste],
+        raw: { temp: document.getElementById('wasteTemp').value, general: wCalc.g, organic: wCalc.o, haz: wCalc.haz, recycle: '', recycleInc: '', infGen: '', infHaz: '', extSource: '', extGen: '', extHaz: '', total: wCalc.grandTotal }
     });
-
-    if(document.getElementById('chkRecycle')?.checked) {
-        addHistoryRow({
-            date: document.getElementById('dateRecycle').value,
-            cat: 'จัดการขยะ', point: 'จำหน่ายรีไซเคิล', value: `${document.getElementById('valRecycle').value} กก. (รายได้ ${document.getElementById('incomeRecycle').value} บ.)`,
-            status: 'ขายเข้ากองทุน', recorder: 'นายจีรศักดิ์ นวลดี', images: [],
-            raw: { temp: '', general: '', organic: '', haz: '', recycle: document.getElementById('valRecycle').value, recycleInc: document.getElementById('incomeRecycle').value, infGen: '', infHaz: '', extSource: '', extGen: '', extHaz: '', total: '' }
-        });
-    }
-    if(document.getElementById('chkInfGen')?.checked) {
-        addHistoryRow({
-            date: document.getElementById('dateInfGen').value,
-            cat: 'จัดการขยะ', point: 'ติดเชื้อทั่วไป รพ.', value: `${document.getElementById('valInfGen').value} กก.`,
-            status: 'รอส่งกำจัด', recorder: 'นายจีรศักดิ์ นวลดี', images: [],
-            raw: { temp: '', general: '', organic: '', haz: '', recycle: '', recycleInc: '', infGen: document.getElementById('valInfGen').value, infHaz: '', extSource: '', extGen: '', extHaz: '', total: '' }
-        });
-    }
-    if(document.getElementById('chkInfHaz')?.checked) {
-        addHistoryRow({
-            date: document.getElementById('dateInfHaz').value,
-            cat: 'จัดการขยะ', point: 'ติดเชื้ออันตราย/มีคม รพ.', value: `${document.getElementById('valInfHaz').value} กก.`,
-            status: 'รอส่งกำจัด', recorder: 'นายจีรศักดิ์ นวลดี', images: [],
-            raw: { temp: '', general: '', organic: '', haz: '', recycle: '', recycleInc: '', infGen: '', infHaz: document.getElementById('valInfHaz').value, extSource: '', extGen: '', extHaz: '', total: '' }
-        });
-    }
-    if(document.getElementById('chkExtInf')?.checked) {
-        addHistoryRow({
-            date: document.getElementById('dateExtInf').value,
-            cat: 'จัดการขยะ', point: `รับฝากจาก ${document.getElementById('sourceExtInf').value}`, value: `${wCalc.extInfTotal} กก.`,
-            status: 'รับฝาก', recorder: 'นายจีรศักดิ์ นวลดี', images: [],
-            raw: { temp: '', general: '', organic: '', haz: '', recycle: '', recycleInc: '', infGen: '', infHaz: '', extSource: document.getElementById('sourceExtInf').value, extGen: document.getElementById('valExtInfGen').value, extHaz: document.getElementById('valExtInfHaz').value, total: '' }
-        });
-    }
-
-    uploadedImagesState.waste = [];
-    renderImageThumbnails('waste', 'wasteImgPreview');
-    showToast('บันทึกปริมาณขยะมูลฝอยเรียบร้อย');
+    if(document.getElementById('chkRecycle')?.checked) addHistoryRow({ date: document.getElementById('dateRecycle').value, cat: 'จัดการขยะ', point: 'จำหน่ายรีไซเคิล', value: `${document.getElementById('valRecycle').value} กก. (รายได้ ${document.getElementById('incomeRecycle').value} บ.)`, status: 'ขายเข้ากองทุน', recorder: 'นายจีรศักดิ์ นวลดี', images: [], raw: { temp: '', general: '', organic: '', haz: '', recycle: document.getElementById('valRecycle').value, recycleInc: document.getElementById('incomeRecycle').value, infGen: '', infHaz: '', extSource: '', extGen: '', extHaz: '', total: '' } });
+    if(document.getElementById('chkInfGen')?.checked) addHistoryRow({ date: document.getElementById('dateInfGen').value, cat: 'จัดการขยะ', point: 'ติดเชื้อทั่วไป รพ.', value: `${document.getElementById('valInfGen').value} กก.`, status: 'รอส่งกำจัด', recorder: 'นายจีรศักดิ์ นวลดี', images: [], raw: { temp: '', general: '', organic: '', haz: '', recycle: '', recycleInc: '', infGen: document.getElementById('valInfGen').value, infHaz: '', extSource: '', extGen: '', extHaz: '', total: '' } });
+    if(document.getElementById('chkInfHaz')?.checked) addHistoryRow({ date: document.getElementById('dateInfHaz').value, cat: 'จัดการขยะ', point: 'ติดเชื้ออันตราย/มีคม รพ.', value: `${document.getElementById('valInfHaz').value} กก.`, status: 'รอส่งกำจัด', recorder: 'นายจีรศักดิ์ นวลดี', images: [], raw: { temp: '', general: '', organic: '', haz: '', recycle: '', recycleInc: '', infGen: '', infHaz: document.getElementById('valInfHaz').value, extSource: '', extGen: '', extHaz: '', total: '' } });
+    if(document.getElementById('chkExtInf')?.checked) addHistoryRow({ date: document.getElementById('dateExtInf').value, cat: 'จัดการขยะ', point: `รับฝากจาก ${document.getElementById('sourceExtInf').value}`, value: `${wCalc.extInfTotal} กก.`, status: 'รับฝาก', recorder: 'นายจีรศักดิ์ นวลดี', images: [], raw: { temp: '', general: '', organic: '', haz: '', recycle: '', recycleInc: '', infGen: '', infHaz: '', extSource: document.getElementById('sourceExtInf').value, extGen: document.getElementById('valExtInfGen').value, extHaz: document.getElementById('valExtInfHaz').value, total: '' } });
+    uploadedImagesState.waste = []; renderImageThumbnails('waste', 'wasteImgPreview'); showToast('บันทึกปริมาณขยะมูลฝอยเรียบร้อย');
 }
 
 function handleSafetySubmit(e) {
-    e.preventDefault();
-    const typeSelect = document.getElementById('safetyType').value;
-    const type = typeSelect === 'custom' ? document.getElementById('safetyCustomInput')?.value : typeSelect;
-    const dept = document.getElementById('safetyDept').value || '-';
-    const role = document.getElementById('safetyRole').value || '-';
-    const detail = document.getElementById('safetyDetail').value || '-';
-    
+    e.preventDefault(); const typeSelect = document.getElementById('safetyType').value; const dept = document.getElementById('safetyDept').value || '-'; const role = document.getElementById('safetyRole').value || '-'; const detail = document.getElementById('safetyDetail').value || '-';
     addHistoryRow({
-        date: document.getElementById('safetyDate').value,
-        cat: 'ความปลอดภัย',
-        point: `${dept} (ผู้รายงาน: ${role})`,
-        value: `หมวดหมู่: ${type} | รายละเอียด: ${detail}`,
-        status: (type && type.includes('ไม่มี')) ? 'ปลอดภัย' : 'เฝ้าระวัง',
-        recorder: role,
-        images: [...uploadedImagesState.safety],
-        raw: { type: type, dept: dept, role: role, detail: detail }
+        date: document.getElementById('safetyDate').value, cat: 'ความปลอดภัย', point: `${dept} (ผู้รายงาน: ${role})`, value: `หมวดหมู่: ${typeSelect} | รายละเอียด: ${detail}`, status: (typeSelect && typeSelect.includes('ไม่มี')) ? 'ปลอดภัย' : 'เฝ้าระวัง', recorder: role, images: [...uploadedImagesState.safety], raw: { type: typeSelect, dept: dept, role: role, detail: detail }
     });
-    uploadedImagesState.safety = [];
-    renderImageThumbnails('safety', 'safetyImgPreview');
-
-    if (type && !type.includes('ไม่มีอุบัติการณ์') && !type.includes('Zero')) {
-        const kpiAcc = document.getElementById('kpiAccident');
-        if (kpiAcc) kpiAcc.innerText = parseInt(kpiAcc.innerText || '0') + 1;
-    }
+    uploadedImagesState.safety = []; renderImageThumbnails('safety', 'safetyImgPreview');
+    if (typeSelect && !typeSelect.includes('ไม่มีอุบัติการณ์') && !typeSelect.includes('Zero')) { const kpiAcc = document.getElementById('kpiAccident'); if (kpiAcc) kpiAcc.innerText = parseInt(kpiAcc.innerText || '0') + 1; }
     showToast('ส่งรายงานอุบัติการณ์ด้านสิ่งแวดล้อมเรียบร้อยแล้ว');
 }
 
 function handleMaintenanceSubmit(e) {
     e.preventDefault();
     addHistoryRow({
-        date: document.getElementById('maintDate').value,
-        cat: 'ซ่อมบำรุง',
-        point: document.getElementById('maintItem').value,
-        value: document.getElementById('maintAction').value,
-        status: 'เสร็จสิ้น',
-        recorder: 'นายจีรศักดิ์ นวลดี',
-        images: [...uploadedImagesState.maint],
-        raw: { 
-            cat: document.getElementById('maintCategory').value,
-            item: document.getElementById('maintItem').value,
-            prob: document.getElementById('maintProblem').value,
-            action: document.getElementById('maintAction').value
-        }
+        date: document.getElementById('maintDate').value, cat: 'ซ่อมบำรุง', point: document.getElementById('maintItem').value, value: document.getElementById('maintAction').value, status: 'เสร็จสิ้น', recorder: 'นายจีรศักดิ์ นวลดี', images: [...uploadedImagesState.maint],
+        raw: { cat: document.getElementById('maintCategory').value, item: document.getElementById('maintItem').value, prob: document.getElementById('maintProblem').value, action: document.getElementById('maintAction').value }
     });
-    uploadedImagesState.maint = [];
-    renderImageThumbnails('maint', 'maintImgPreview');
-    showToast('บันทึกงานซ่อมบำรุงเรียบร้อย');
+    uploadedImagesState.maint = []; renderImageThumbnails('maint', 'maintImgPreview'); showToast('บันทึกงานซ่อมบำรุงเรียบร้อย');
 }
 
 function handleLabSubmit(e) {
@@ -2079,110 +1897,104 @@ function handleLabSubmit(e) {
     const type = document.getElementById('labTypeSelect').value;
     const date = document.getElementById('labDate').value;
     const rpt = document.getElementById('labReportNo').value;
-    let point = '';
-    let valStr = '';
-    let status = 'ผ่านเกณฑ์';
+    let point = ''; let valStr = ''; let status = 'ผ่านเกณฑ์'; let tableData = [];
 
     if (type === 'wwts') {
         point = 'น้ำทิ้งหลังบำบัด';
         valStr = `BOD: ${document.getElementById('labWwts_bod').value}, pH: ${document.getElementById('labWwts_ph').value}, Cl: ${document.getElementById('labWwts_cl2').value}`;
-        const ph = parseFloat(document.getElementById('labWwts_ph').value);
-        if(ph < 5.5 || ph > 9.0) status = 'เฝ้าระวัง pH';
+        const phNum = parseFloat(document.getElementById('labWwts_ph').value);
+        if(!isNaN(phNum) && (phNum < 5.5 || phNum > 9.0)) status = 'เฝ้าระวัง pH';
+
+        tableData = [
+            { item: 'pH', result: document.getElementById('labWwts_ph').value, std: '5.5-9.0', unit: '-' },
+            { item: 'BOD', result: document.getElementById('labWwts_bod').value, std: '≤20', unit: 'mg/L' },
+            { item: 'SS', result: document.getElementById('labWwts_ss').value, std: '≤30', unit: 'mg/L' },
+            { item: 'TDS', result: document.getElementById('labWwts_tds').value, std: '≤1000', unit: 'mg/L' },
+            { item: 'Oil & Grease', result: document.getElementById('labWwts_oil').value, std: '≤20', unit: 'mg/L' },
+            { item: 'TKN', result: document.getElementById('labWwts_tkn').value, std: '≤35', unit: 'mg/L' },
+            { item: 'Sulfide', result: document.getElementById('labWwts_sulfide').value, std: '≤1.0', unit: 'mg/L' },
+            { item: 'Chlorine', result: document.getElementById('labWwts_cl2').value, std: '≤1.0', unit: 'mg/L' },
+            { item: 'Total Coliform', result: document.getElementById('labWwts_tc').value, std: '< 5,000', unit: 'MPN/100mL' },
+            { item: 'Fecal Coliform', result: document.getElementById('labWwts_fc').value, std: '< 1,000', unit: 'MPN/100mL' },
+            { item: 'Parasitic Eggs', result: document.getElementById('labWwts_eggs').value, std: 'Not Found', unit: 'eggs/L' }
+        ];
+
     } else if (type === 'water') {
         point = 'น้ำประปา รพ.';
-        valStr = `Coliform: ${document.getElementById('labTap_tc').value} MPN, pH: ${document.getElementById('labTap_ph').value}`;
-        const tc = document.getElementById('labTap_tc').value;
-        if(tc.includes('>') || parseFloat(tc.replace(/[^0-9.]/g, '')) >= 1.1) status = 'พบ Coliform';
+        const tcVal = document.getElementById('labTap_tc').value;
+        valStr = `Coliform: ${tcVal} MPN, pH: ${document.getElementById('labTap_ph').value}`;
+        if(tcVal.includes('>') || parseFloat(tcVal.replace(/[^0-9.]/g, '')) >= 1.1) status = 'พบ Coliform';
+
+        tableData = [
+            { item: 'pH', result: document.getElementById('labTap_ph').value, std: '6.5-8.5', unit: '-' },
+            { item: 'Turbidity', result: document.getElementById('labTap_turb').value, std: '≤5', unit: 'NTU' },
+            { item: 'Color', result: document.getElementById('labTap_color').value, std: '≤15', unit: 'Pt-Co' },
+            { item: 'Total Hardness', result: document.getElementById('labTap_hard').value, std: '≤300', unit: 'mg/L' },
+            { item: 'TDS', result: document.getElementById('labTap_tds').value, std: '≤500', unit: 'mg/L' },
+            { item: 'Chloride', result: document.getElementById('labTap_cl').value, std: '≤250', unit: 'mg/L' },
+            { item: 'Sulfate', result: document.getElementById('labTap_so4').value, std: '≤250', unit: 'mg/L' },
+            { item: 'Fluoride', result: document.getElementById('labTap_f').value, std: '≤0.7', unit: 'mg/L' },
+            { item: 'Nitrate', result: document.getElementById('labTap_no3').value, std: '≤50', unit: 'mg/L' },
+            { item: 'Nitrite', result: document.getElementById('labTap_no2').value, std: '≤3', unit: 'mg/L' },
+            { item: 'Arsenic (As)', result: document.getElementById('labTap_as').value, std: '≤0.01', unit: 'mg/L' },
+            { item: 'Cadmium (Cd)', result: document.getElementById('labTap_cd').value, std: '≤0.003', unit: 'mg/L' },
+            { item: 'Chromium (Cr)', result: document.getElementById('labTap_cr').value, std: '≤0.05', unit: 'mg/L' },
+            { item: 'Lead (Pb)', result: document.getElementById('labTap_pb').value, std: '≤0.01', unit: 'mg/L' },
+            { item: 'Mercury (Hg)', result: document.getElementById('labTap_hg').value, std: '≤0.001', unit: 'mg/L' },
+            { item: 'Iron (Fe)', result: document.getElementById('labTap_fe').value, std: '≤0.3', unit: 'mg/L' },
+            { item: 'Manganese (Mn)', result: document.getElementById('labTap_mn').value, std: '≤0.3', unit: 'mg/L' },
+            { item: 'Zinc (Zn)', result: document.getElementById('labTap_zn').value, std: '≤3.0', unit: 'mg/L' },
+            { item: 'Copper (Cu)', result: document.getElementById('labTap_cu').value, std: '≤1.0', unit: 'mg/L' },
+            { item: 'Total Coliform', result: tcVal, std: '< 1.1', unit: 'MPN/100mL' },
+            { item: 'E. coli', result: document.getElementById('labTap_ecoli').value, std: '< 1.1', unit: 'MPN/100mL' }
+        ];
+
     } else {
         point = 'กากตะกอนไข่พยาธิ';
         valStr = `ไข่พยาธิ: ${document.getElementById('labSludge_eggs').value}, E.coli: ${document.getElementById('labSludge_ecoli').value}`;
+        tableData = [
+            { item: 'Parasitic Eggs', result: document.getElementById('labSludge_eggs').value, std: 'Not Found', unit: 'eggs/g' },
+            { item: 'E. coli', result: document.getElementById('labSludge_ecoli').value, std: '< 1,000', unit: 'MPN/g' }
+        ];
     }
 
     addHistoryRow({
-        date: date,
-        cat: 'ผลตรวจแล็บ',
-        point: point,
-        value: valStr,
-        status: status,
-        recorder: 'นายจีรศักดิ์ นวลดี',
-        images: [...uploadedImagesState.lab],
-        raw: { reportNo: rpt, type: point, valStr: valStr }
+        date: date, cat: 'ผลตรวจแล็บ', point: point, value: valStr, status: status, recorder: 'นายจีรศักดิ์ นวลดี', images: [...uploadedImagesState.lab], raw: { reportNo: rpt, type: point, valStr: valStr, tableData: tableData }
     });
-
-    uploadedImagesState.lab = [];
-    renderImageThumbnails('lab', 'labImgPreview');
-    showToast('บันทึกผลแล็บเรียบร้อย');
+    uploadedImagesState.lab = []; renderImageThumbnails('lab', 'labImgPreview'); showToast('บันทึกผลแล็บเรียบร้อย');
 }
 
 function handleHasSubmit(e) {
-    e.preventDefault();
-    let failCount = 0;
+    e.preventDefault(); let failCount = 0;
     for(let i=1; i<=16; i++) {
         const radios = document.getElementsByName(`has_${i}`);
-        let passed = true;
-        for(let r of radios) { if(r.value === 'fail' && r.checked) passed = false; }
+        let passed = true; for(let r of radios) { if(r.value === 'fail' && r.checked) passed = false; }
         if(!passed) failCount++;
     }
-    
     addHistoryRow({
-        date: document.getElementById('hasDate').value,
-        cat: 'HAS ส้วมสาธารณะ',
-        point: document.getElementById('hasLocation').value,
-        value: `ห้องส้วม ${document.getElementById('hasToilets').value} ที่, ไม่ผ่าน ${failCount} ข้อ`,
-        status: failCount === 0 ? 'ผ่านเกณฑ์' : 'ต้องปรับปรุง',
-        recorder: document.getElementById('hasInspector').value,
-        images: [...uploadedImagesState.has],
-        raw: { loc: document.getElementById('hasLocation').value, failCount: failCount, toilets: document.getElementById('hasToilets').value }
+        date: document.getElementById('hasDate').value, cat: 'HAS ส้วมสาธารณะ', point: document.getElementById('hasLocation').value, value: `ห้องส้วม ${document.getElementById('hasToilets').value} ที่, ไม่ผ่าน ${failCount} ข้อ`, status: failCount === 0 ? 'ผ่านเกณฑ์' : 'ต้องปรับปรุง', recorder: document.getElementById('hasInspector').value, images: [...uploadedImagesState.has], raw: { loc: document.getElementById('hasLocation').value, failCount: failCount, toilets: document.getElementById('hasToilets').value }
     });
-    uploadedImagesState.has = [];
-    renderImageThumbnails('has', 'hasImgPreview');
-    showToast('บันทึกแบบประเมิน HAS เรียบร้อย');
+    uploadedImagesState.has = []; renderImageThumbnails('has', 'hasImgPreview'); showToast('บันทึกแบบประเมิน HAS เรียบร้อย');
 }
 
 function handleA11Submit(e) {
-    e.preventDefault();
-    const result = document.getElementById('a11Result').value;
+    e.preventDefault(); const result = document.getElementById('a11Result').value;
     addHistoryRow({
-        date: document.getElementById('a11Date').value,
-        cat: 'คุณภาพตู้น้ำดื่ม อ.11',
-        point: document.getElementById('a11Location').value,
-        value: `ผล: ${result} | หมายเหตุ: ${document.getElementById('a11Note').value}`,
-        status: result.includes('ไม่พบเชื้อ') ? 'ผ่านเกณฑ์' : 'เฝ้าระวัง',
-        recorder: document.getElementById('a11Inspector').value,
-        images: [...uploadedImagesState.a11],
-        raw: { loc: document.getElementById('a11Location').value, result: result, note: document.getElementById('a11Note').value }
+        date: document.getElementById('a11Date').value, cat: 'คุณภาพตู้น้ำดื่ม อ.11', point: document.getElementById('a11Location').value, value: `ผล: ${result} | หมายเหตุ: ${document.getElementById('a11Note').value}`, status: result.includes('ไม่พบเชื้อ') ? 'ผ่านเกณฑ์' : 'เฝ้าระวัง', recorder: document.getElementById('a11Inspector').value, images: [...uploadedImagesState.a11], raw: { loc: document.getElementById('a11Location').value, result: result, note: document.getElementById('a11Note').value }
     });
-    uploadedImagesState.a11 = [];
-    renderImageThumbnails('a11', 'a11ImgPreview');
-    showToast('บันทึกแบบตรวจ อ.11 เรียบร้อย');
+    uploadedImagesState.a11 = []; renderImageThumbnails('a11', 'a11ImgPreview'); showToast('บันทึกแบบตรวจ อ.11 เรียบร้อย');
 }
 
-// ----------------------------------------------------
-// ระบบ Cloud Sync (อัปเดตสำหรับ Multi-Sheet)
-// ----------------------------------------------------
-// ระบบ Cloud Sync & API Functions
-// ----------------------------------------------------
 function showLoading(show, text = 'กำลังทำงาน...') {
-    const loader = document.getElementById('loadingOverlay');
-    const label = document.getElementById('loadingText');
-    if (loader) {
-        if (show) {
-            if (label) label.innerText = text;
-            loader.classList.remove('hidden');
-        } else {
-            loader.classList.add('hidden');
-        }
-    }
+    const loader = document.getElementById('loadingOverlay'); const label = document.getElementById('loadingText');
+    if (loader) { if (show) { if (label) label.innerText = text; loader.classList.remove('hidden'); } else { loader.classList.add('hidden'); } }
 }
 
 function saveApiUrl() {
     const input = document.getElementById('apiUrlInput');
     if (input) {
-        const url = input.value.trim();
-        localStorage.setItem(STORAGE_KEY_API, url);
-        currentApiUrl = url;
-        showToast('บันทึกลิงก์ฐานข้อมูลเรียบร้อยแล้ว');
-        updateConnectionStatusUI(); // อัปเดตไฟสถานะทันทีเมื่อกดบันทึก
+        const url = input.value.trim(); localStorage.setItem(STORAGE_KEY_API, url); currentApiUrl = url;
+        showToast('บันทึกลิงก์ฐานข้อมูลเรียบร้อยแล้ว'); updateConnectionStatusUI();
         if(url !== "") loadHistoryFromStorage(); 
     }
 }
@@ -2191,135 +2003,165 @@ async function addHistoryRow(record) {
     if (currentApiUrl !== "") {
         showLoading(true, 'กำลังอัปโหลดข้อมูลและรูปภาพขึ้นคลาวด์...');
         try {
-            const response = await fetch(currentApiUrl, {
-                method: 'POST',
-                redirect: 'follow',
-                headers: {
-                    "Content-Type": "text/plain;charset=utf-8",
-                },
-                body: JSON.stringify(record)
-            });
+            const response = await fetch(currentApiUrl, { method: 'POST', redirect: 'follow', headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(record) });
             const result = await response.json();
-            if (result.result === 'success') {
-                showToast('อัปโหลดขึ้นฐานข้อมูลสำเร็จ');
-                await loadHistoryFromStorage();
-            } else {
-                alert('เกิดข้อผิดพลาดจากเซิร์ฟเวอร์: ' + result.error);
-            }
-        } catch (error) {
-            alert('ไม่สามารถเชื่อมต่อฐานข้อมูลได้: ' + error.message);
-        } finally {
-            showLoading(false);
-        }
+            if (result.result === 'success') { showToast('อัปโหลดสำเร็จ'); await loadHistoryFromStorage(); } else { alert('เกิดข้อผิดพลาด: ' + result.error); }
+        } catch (error) { alert('ไม่สามารถเชื่อมต่อฐานข้อมูลได้: ' + error.message); } finally { showLoading(false); }
     } else {
-        historyRecords.unshift(record);
-        saveHistoryToStorage();
-        renderHistoryTable();
-        renderDashboardLists();
+        historyRecords.unshift(record); saveHistoryToStorage(); renderHistoryTable(); renderDashboardLists();
     }
 }
 
 function renderHistoryTable() {
-    const tbody = document.getElementById('historyTableBody');
-    if(!tbody) return;
+    const tbody = document.getElementById('historyTableBody'); if(!tbody) return;
     tbody.innerHTML = historyRecords.map(r => {
         let imageHtml = `<span class="text-slate-400 text-[11px]">- ไม่มีภาพ -</span>`;
         if (r.images && r.images.length > 0) {
             const encoded = encodeURIComponent(JSON.stringify(r.images));
             imageHtml = `<button onclick="viewMultipleImages('${encoded}')" class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-lg border border-emerald-300 shadow-xs"><i data-lucide="image" class="w-3.5 h-3.5"></i> ดูภาพ (${r.images.length})</button>`;
         }
-        
         let statusStyle = 'text-slate-700';
         if(r.status === 'ผ่านเกณฑ์' || r.status === 'ปลอดภัย' || r.status.includes('เสร็จสิ้น')) statusStyle = 'text-emerald-700 font-bold bg-emerald-100 px-2 py-0.5 rounded';
         else if (r.status.includes('เฝ้าระวัง') || r.status.includes('ปรับปรุง') || r.status.includes('ผิดพลาด') || r.status.includes('พบ Coliform')) statusStyle = 'text-rose-700 font-bold bg-rose-100 px-2 py-0.5 rounded';
 
-        return `
-        <tr class="border-b hover:bg-slate-50 transition">
-            <td class="p-3 font-mono">${r.date}</td>
-            <td class="p-3 font-bold text-emerald-800">${r.cat}</td>
-            <td class="p-3 font-semibold text-slate-800">${r.point}<br><span class="text-[11px] text-slate-500 font-normal">${r.value}</span></td>
-            <td class="p-3">${imageHtml}</td>
-            <td class="p-3 font-medium"><span class="${statusStyle}">${r.status}</span></td>
-        </tr>
-    `}).join('');
+        return `<tr class="border-b hover:bg-slate-50 transition"><td class="p-3 font-mono">${r.date.substring(0,10)}</td><td class="p-3 font-bold text-emerald-800">${r.cat}</td><td class="p-3 font-semibold text-slate-800">${r.point}<br><span class="text-[11px] text-slate-500 font-normal">${r.value}</span></td><td class="p-3">${imageHtml}</td><td class="p-3 font-medium"><span class="${statusStyle}">${r.status}</span></td></tr>`;
+    }).join('');
     lucide.createIcons();
 }
 
 function renderDashboardLists() {
-    const listWwts = historyRecords.filter(r => r.cat === 'ผลตรวจแล็บ' && r.point.includes('น้ำทิ้ง')).slice(0, 3);
-    const listWater = historyRecords.filter(r => r.cat === 'ผลตรวจแล็บ' && r.point.includes('น้ำประปา')).slice(0, 3);
-    const listSludge = historyRecords.filter(r => r.cat === 'ผลตรวจแล็บ' && r.point.includes('กากตะกอน')).slice(0, 3);
+    const listWwts = historyRecords.filter(r => r.cat === 'ผลตรวจแล็บ' && r.point.includes('น้ำทิ้ง'));
+    const listWater = historyRecords.filter(r => r.cat === 'ผลตรวจแล็บ' && r.point.includes('น้ำประปา'));
+    const listSludge = historyRecords.filter(r => r.cat === 'ผลตรวจแล็บ' && r.point.includes('กากตะกอน'));
     const listSafety = historyRecords.filter(r => r.cat === 'ความปลอดภัย').slice(0, 5);
     const listMaint = historyRecords.filter(r => r.cat === 'ซ่อมบำรุง').slice(0, 5);
 
-    const generateHtml = (arr, emptyMsg) => {
+    const generateLabHtml = (arr, emptyMsg) => {
+        if(arr.length === 0) return `<div class="text-xs text-slate-400 text-center py-4 border-2 border-dashed border-slate-200 rounded-xl">${emptyMsg}</div>`;
+        let html = '';
+        const latest = arr[0];
+        let sClass = latest.status.includes('ผ่านเกณฑ์') || latest.status.includes('ปลอดภัย') ? 'bg-emerald-100 text-emerald-800 border-emerald-300' : 'bg-rose-100 text-rose-800 border-rose-300';
+        
+        let tableHtml = `<div class="text-[10px] text-slate-600 truncate mt-0.5">${latest.value}</div>`;
+        if (latest.raw && latest.raw.tableData) {
+            let rows = latest.raw.tableData.map(t => {
+                // วิเคราะห์ผ่าน/ไม่ผ่านเบื้องต้น
+                let resColor = 'text-slate-900';
+                let icon = '';
+                if(latest.status.includes('ผ่านเกณฑ์') || latest.status.includes('ปลอดภัย')) {
+                    if(t.result && (t.result.toString().includes('<') || t.result.toString().includes('Not'))) {
+                        resColor = 'text-emerald-700';
+                        icon = '<i data-lucide="check" class="w-3 h-3 inline mr-0.5 text-emerald-600"></i>';
+                    }
+                }
+                if(t.result && (t.result.toString().includes('>') || t.result.toString() === 'Found')) {
+                    resColor = 'text-rose-600';
+                    icon = '<i data-lucide="alert-circle" class="w-3 h-3 inline mr-0.5 text-rose-500"></i>';
+                }
+                if(t.item === 'pH') {
+                    const phVal = parseFloat(t.result);
+                    if(phVal < 5.5 || phVal > 9.0) { resColor = 'text-rose-600'; icon = '<i data-lucide="alert-circle" class="w-3 h-3 inline mr-0.5 text-rose-500"></i>'; }
+                    else if (!isNaN(phVal)) { resColor = 'text-emerald-700'; icon = '<i data-lucide="check" class="w-3 h-3 inline mr-0.5 text-emerald-600"></i>'; }
+                }
+                if(t.item === 'Chlorine') {
+                    const clVal = parseFloat(t.result);
+                    if(clVal > 1.0) { resColor = 'text-rose-600'; icon = '<i data-lucide="alert-circle" class="w-3 h-3 inline mr-0.5 text-rose-500"></i>'; }
+                    else if (!isNaN(clVal)) { resColor = 'text-emerald-700'; icon = '<i data-lucide="check" class="w-3 h-3 inline mr-0.5 text-emerald-600"></i>'; }
+                }
+
+                return `<tr class="hover:bg-slate-100 transition-colors"><td class="py-1.5 px-2 border-b border-slate-200 font-medium text-slate-700">${t.item}</td><td class="py-1.5 px-2 border-b border-slate-200 font-mono font-bold ${resColor} whitespace-nowrap">${icon}${t.result}</td><td class="py-1.5 px-2 border-b border-slate-200 text-slate-500 font-mono text-[9px] whitespace-nowrap">${t.std}</td><td class="py-1.5 px-2 border-b border-slate-200 text-slate-500 text-[9px] whitespace-nowrap">${t.unit}</td></tr>`;
+            }).join('');
+            tableHtml = `<div class="mt-3 overflow-x-auto rounded-lg border-2 border-slate-300 bg-white"><table class="w-full text-[10px] text-left"><thead class="bg-slate-100 text-slate-700 border-b-2 border-slate-300"><tr><th class="py-1.5 px-2 font-bold whitespace-nowrap">รายการทดสอบ</th><th class="py-1.5 px-2 font-bold whitespace-nowrap">ผลตรวจ</th><th class="py-1.5 px-2 font-bold whitespace-nowrap">เกณฑ์</th><th class="py-1.5 px-2 font-bold whitespace-nowrap">หน่วย</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+        }
+
+        let imagesBtn = '';
+        if (latest.images && latest.images.length > 0) {
+            const encoded = encodeURIComponent(JSON.stringify(latest.images));
+            imagesBtn = `<button onclick="viewMultipleImages('${encoded}')" class="mt-2.5 w-full inline-flex items-center justify-center gap-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-[10px] font-bold px-3 py-2 rounded-lg border-2 border-slate-300 transition shadow-xs"><i data-lucide="image" class="w-3.5 h-3.5 text-blue-600"></i> ดูรูปภาพหลักฐานแนบ (${latest.images.length})</button>`;
+        } else {
+             imagesBtn = `<div class="mt-2.5 text-[10px] text-slate-400 text-center italic">- ไม่มีภาพถ่ายแนบ -</div>`;
+        }
+
+        html += `<div class="p-3.5 bg-slate-50/80 rounded-xl border-2 border-slate-300 flex flex-col mb-3 shadow-md"><div class="flex justify-between items-center mb-1.5"><span class="font-mono text-slate-700 font-bold bg-white px-2 py-0.5 rounded-md border border-slate-200 shadow-xs"><i data-lucide="calendar" class="w-3 h-3 inline text-slate-500 mr-1"></i>${latest.date.substring(0, 10)}</span><span class="${sClass} px-2 py-0.5 rounded font-bold border shadow-xs">${latest.status}</span></div><div class="font-bold text-slate-800 text-xs mb-1">เลขที่รายงาน: <span class="text-purple-700">${latest.raw?.reportNo || '-'}</span></div>${tableHtml}${imagesBtn}</div>`;
+
+        if (arr.length > 1) {
+            html += `<div class="space-y-1.5 mt-2"><div class="text-[10px] font-bold text-slate-500 flex items-center gap-1"><i data-lucide="history" class="w-3 h-3"></i> ประวัติผลตรวจย้อนหลัง:</div>`;
+            for(let i=1; i<arr.length; i++) {
+                const old = arr[i];
+                const recordIndex = historyRecords.indexOf(old);
+                let oldClass = old.status.includes('ผ่านเกณฑ์') || old.status.includes('ปลอดภัย') ? 'text-emerald-600' : 'text-rose-600';
+                html += `<button onclick="viewLabDetail(${recordIndex})" class="w-full text-left p-2.5 bg-white rounded-lg border-2 border-slate-200 hover:border-purple-400 hover:bg-purple-50 transition text-[10px] flex justify-between items-center shadow-xs group"><div class="flex flex-col"><span class="font-mono text-slate-700 font-bold group-hover:text-purple-800">${old.date.substring(0,10)}</span><span class="text-slate-500 mt-0.5 truncate max-w-[150px] group-hover:text-purple-600">${old.raw?.reportNo || '-'}</span></div><span class="${oldClass} font-bold flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-md border border-slate-100 group-hover:bg-white">${old.status} <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i></span></button>`;
+            }
+            html += `</div>`;
+        }
+        return html;
+    };
+
+    const generateNormalHtml = (arr, emptyMsg) => {
         if(arr.length === 0) return `<div class="text-xs text-slate-400 text-center py-2">${emptyMsg}</div>`;
         return arr.map(r => {
-            let sClass = r.status.includes('ผ่านเกณฑ์') || r.status.includes('ปลอดภัย') || r.status.includes('เสร็จสิ้น') ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800';
-            return `<div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200 hover:bg-white transition text-xs">
-                <div class="flex justify-between items-center mb-1"><span class="font-mono text-slate-500">${r.date.substring(0, 10)}</span><span class="${sClass} px-2 py-0.5 rounded font-bold">${r.status}</span></div>
-                <div class="font-semibold text-slate-800">${r.point}</div>
-                <div class="text-[10px] text-slate-600 truncate mt-0.5">${r.value}</div>
-            </div>`;
+            let sClass = r.status.includes('ผ่านเกณฑ์') || r.status.includes('ปลอดภัย') || r.status.includes('เสร็จสิ้น') ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : 'bg-rose-100 text-rose-800 border-rose-200';
+            return `<div class="p-2.5 bg-white rounded-xl border-2 border-slate-200 hover:border-slate-300 transition text-xs flex flex-col shadow-xs"><div class="flex justify-between items-center mb-1"><span class="font-mono text-slate-500 font-bold">${r.date.substring(0, 10)}</span><span class="${sClass} px-2 py-0.5 rounded font-bold border">${r.status}</span></div><div class="font-semibold text-slate-800">${r.point}</div><div class="text-[10px] text-slate-600 truncate mt-0.5">${r.value}</div></div>`;
         }).join('');
     };
 
-    const dWwts = document.getElementById('dashListLabWwts'); if(dWwts) dWwts.innerHTML = generateHtml(listWwts, 'ยังไม่มีข้อมูลผลแล็บน้ำทิ้ง');
-    const dWater = document.getElementById('dashListLabWater'); if(dWater) dWater.innerHTML = generateHtml(listWater, 'ยังไม่มีข้อมูลผลแล็บน้ำประปา');
-    const dSludge = document.getElementById('dashListLabSludge'); if(dSludge) dSludge.innerHTML = generateHtml(listSludge, 'ยังไม่มีข้อมูลผลแล็บกากตะกอน');
-    const dSafety = document.getElementById('dashListSafety'); if(dSafety) dSafety.innerHTML = generateHtml(listSafety, 'ยังไม่มีประวัติอุบัติการณ์');
-    const dMaint = document.getElementById('dashListMaint'); if(dMaint) dMaint.innerHTML = generateHtml(listMaint, 'ยังไม่มีประวัติการซ่อมบำรุง');
+    const dWwts = document.getElementById('dashListLabWwts'); if(dWwts) dWwts.innerHTML = generateLabHtml(listWwts, 'ยังไม่มีข้อมูลผลแล็บน้ำทิ้ง');
+    const dWater = document.getElementById('dashListLabWater'); if(dWater) dWater.innerHTML = generateLabHtml(listWater, 'ยังไม่มีข้อมูลผลแล็บน้ำประปา');
+    const dSludge = document.getElementById('dashListLabSludge'); if(dSludge) dSludge.innerHTML = generateLabHtml(listSludge, 'ยังไม่มีข้อมูลผลแล็บกากตะกอน');
+    const dSafety = document.getElementById('dashListSafety'); if(dSafety) dSafety.innerHTML = generateNormalHtml(listSafety, 'ยังไม่มีประวัติอุบัติการณ์');
+    const dMaint = document.getElementById('dashListMaint'); if(dMaint) dMaint.innerHTML = generateNormalHtml(listMaint, 'ยังไม่มีประวัติการซ่อมบำรุง');
+    
+    lucide.createIcons();
 }
 
-function saveHistoryToStorage() {
-    if(currentApiUrl === "") {
-        try { localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(historyRecords)); } catch(e){}
+function viewLabDetail(index) {
+    const record = historyRecords[index];
+    if(!record) return;
+    
+    document.getElementById('labDetailTitle').innerText = `ผลตรวจ: ${record.point} (${record.date.substring(0, 10)})`;
+    
+    let content = `<div class="mb-3 text-xs text-slate-700 bg-purple-50 p-3 rounded-xl border border-purple-200"><div class="grid grid-cols-2 gap-2"><div><strong>เลขที่รายงาน:</strong> ${record.raw?.reportNo || '-'}</div><div><strong>สถานะผลตรวจ:</strong> <span class="font-bold ${record.status.includes('ผ่านเกณฑ์') || record.status.includes('ปลอดภัย') ? 'text-emerald-600' : 'text-rose-600'}">${record.status}</span></div></div></div>`;
+    
+    if (record.raw && record.raw.tableData) {
+        let rows = record.raw.tableData.map(t => `<tr class="hover:bg-slate-50"><td class="py-2 px-3 border-b border-slate-200 font-medium text-slate-700">${t.item}</td><td class="py-2 px-3 border-b border-slate-200 font-mono font-bold ${t.result && t.result.toString().includes('<') ? 'text-emerald-700' : (t.result && t.result.toString().includes('>') ? 'text-rose-600' : 'text-slate-900')}">${t.result}</td><td class="py-2 px-3 border-b border-slate-200 text-slate-500">${t.std}</td><td class="py-2 px-3 border-b border-slate-200 text-slate-500">${t.unit}</td></tr>`).join('');
+        content += `<div class="overflow-x-auto rounded-xl border-2 border-slate-300 bg-white shadow-sm"><table class="w-full text-xs text-left"><thead class="bg-slate-100 text-slate-700"><tr><th class="py-2 px-3 font-bold border-b-2 border-slate-300">รายการทดสอบ</th><th class="py-2 px-3 font-bold border-b-2 border-slate-300">ผลการทดสอบ</th><th class="py-2 px-3 font-bold border-b-2 border-slate-300">ค่ามาตรฐาน</th><th class="py-2 px-3 font-bold border-b-2 border-slate-300">หน่วย</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    } else {
+        content += `<div class="text-sm text-slate-500 italic p-4 text-center border-2 border-dashed border-slate-300 rounded-xl">${record.value}</div>`;
     }
+    
+    if (record.images && record.images.length > 0) {
+        const encoded = encodeURIComponent(JSON.stringify(record.images));
+        content += `<div class="mt-4 pt-3 border-t-2 border-slate-100 text-center sm:text-left"><button onclick="viewMultipleImages('${encoded}')" class="inline-flex items-center gap-1.5 bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-xs font-bold px-4 py-2.5 rounded-xl border-2 border-emerald-300 shadow-sm transition"><i data-lucide="image" class="w-4 h-4"></i> ดูภาพหลักฐานหน้าใบรายงานผล (${record.images.length})</button></div>`;
+    }
+    
+    document.getElementById('labDetailContent').innerHTML = content;
+    document.getElementById('labDetailModal').classList.remove('hidden');
+    lucide.createIcons();
 }
+
+function closeLabDetailModal() {
+    document.getElementById('labDetailModal').classList.add('hidden');
+}
+
+function saveHistoryToStorage() { if(currentApiUrl === "") { try { localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(historyRecords)); } catch(e){} } }
 
 async function loadHistoryFromStorage() {
     if (currentApiUrl !== "") {
         showLoading(true, 'กำลังดึงข้อมูลล่าสุดจากฐานข้อมูล...');
-        try {
-            const response = await fetch(currentApiUrl);
-            const data = await response.json();
-            historyRecords = data;
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            showToast('เชื่อมต่อฐานข้อมูลล้มเหลว แสดงข้อมูลออฟไลน์');
-            loadOfflineData();
-        } finally {
-            showLoading(false);
-            renderHistoryTable();
-            renderDashboardLists();
-        }
-    } else {
-        loadOfflineData();
-        renderHistoryTable();
-        renderDashboardLists();
-    }
+        try { const response = await fetch(currentApiUrl); const data = await response.json(); historyRecords = data; } 
+        catch (error) { console.error(error); showToast('เชื่อมต่อฐานข้อมูลล้มเหลว แสดงข้อมูลออฟไลน์'); loadOfflineData(); } 
+        finally { showLoading(false); renderHistoryTable(); renderDashboardLists(); }
+    } else { loadOfflineData(); renderHistoryTable(); renderDashboardLists(); }
 }
 
 function loadOfflineData() {
-    try {
-        const stored = localStorage.getItem(STORAGE_KEY_HISTORY);
-        if(stored) historyRecords = JSON.parse(stored);
-        else historyRecords = [...defaultMockHistory];
-    } catch(e) {
-        historyRecords = [...defaultMockHistory];
-    }
+    try { const stored = localStorage.getItem(STORAGE_KEY_HISTORY); if(stored) historyRecords = JSON.parse(stored); else historyRecords = [...defaultMockHistory]; } 
+    catch(e) { historyRecords = [...defaultMockHistory]; }
 }
 
 function clearHistoryData() {
-    if (currentApiUrl !== "") {
-        alert("ในโหมดออนไลน์ (คลาวด์) ไม่สามารถลบข้อมูลจากแอปได้ กรุณาลบโดยตรงที่ไฟล์ Google Sheets ครับ");
-        return;
-    }
-    historyRecords = [];
-    saveHistoryToStorage();
-    renderHistoryTable();
-    renderDashboardLists();
-    showToast('ล้างประวัติเรียบร้อยแล้ว');
+    if (currentApiUrl !== "") { alert("ในโหมดออนไลน์ (คลาวด์) ไม่สามารถลบข้อมูลจากแอปได้ กรุณาลบโดยตรงที่ไฟล์ Google Sheets ครับ"); return; }
+    historyRecords = []; saveHistoryToStorage(); renderHistoryTable(); renderDashboardLists(); showToast('ล้างประวัติเรียบร้อยแล้ว');
 }
 
 function exportToCSV() {
@@ -2328,46 +2170,28 @@ function exportToCSV() {
     const rows = historyRecords.map(r => [`"${r.date}"`, `"${r.cat}"`, `"${r.point} - ${r.value}"`, `"${r.status}"`, `"${r.recorder}"`]);
     const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `MaeAi_Env_Records_${new Date().toISOString().split('T')[0]}.csv`;
-    link.click();
+    const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = `MaeAi_Env_Records.csv`; link.click();
     showToast('ส่งออก CSV สำเร็จ');
 }
 
 function showToast(msg) {
-    const toast = document.getElementById('toast');
-    const txt = document.getElementById('toastMessage');
+    const toast = document.getElementById('toast'); const txt = document.getElementById('toastMessage');
     if(txt) txt.innerText = msg;
-    if(toast) {
-        toast.classList.remove('translate-y-20', 'opacity-0');
-        setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
-    }
+    if(toast) { toast.classList.remove('translate-y-20', 'opacity-0'); setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000); }
 }
 
 function openScanModal() { document.getElementById('scanModal').classList.remove('hidden'); renderSelectedQrCode(); }
 function closeScanModal() { document.getElementById('scanModal').classList.add('hidden'); }
 function openResetModal() { document.getElementById('resetModal').classList.remove('hidden'); }
 function closeResetModal() { document.getElementById('resetModal').classList.add('hidden'); }
-function resetToProduction() {
-    historyRecords = [];
-    saveHistoryToStorage();
-    renderHistoryTable();
-    renderDashboardLists();
-    closeResetModal();
-    showToast('รีเซ็ตระบบพร้อมเริ่มบันทึกจริงเรียบร้อย');
-}
+function resetToProduction() { historyRecords = []; saveHistoryToStorage(); renderHistoryTable(); renderDashboardLists(); closeResetModal(); showToast('รีเซ็ตระบบพร้อมเริ่มบันทึกจริงเรียบร้อย'); }
 
-// ฟังก์ชันอัปเดตป้ายไฟสถานะ (เขียว = คลาวด์, แดง = ออฟไลน์)
 function updateConnectionStatusUI() {
-    const statusEl = document.getElementById('dbConnectionStatus');
-    if (!statusEl) return;
+    const statusEl = document.getElementById('dbConnectionStatus'); if (!statusEl) return;
     if (currentApiUrl && currentApiUrl.trim() !== "") {
-        // สถานะ Online (มีลิงก์ API)
         statusEl.className = "text-[11px] sm:text-xs text-emerald-900 bg-emerald-300 font-bold px-2.5 py-0.5 rounded-full shadow-sm flex items-center gap-1.5 border border-emerald-400";
         statusEl.innerHTML = '<span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-100 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-600"></span></span> <span class="hidden sm:inline">เชื่อมต่อคลาวด์แล้ว</span><span class="sm:hidden">Online</span>';
     } else {
-        // สถานะ Offline (ไม่มีลิงก์ API)
         statusEl.className = "text-[11px] sm:text-xs text-rose-900 bg-rose-200 font-bold px-2.5 py-0.5 rounded-full shadow-sm flex items-center gap-1.5 border border-rose-300";
         statusEl.innerHTML = '<span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-100 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span></span> <span class="hidden sm:inline">ออฟไลน์ (เก็บในเครื่อง)</span><span class="sm:hidden">Offline</span>';
     }
@@ -2375,42 +2199,25 @@ function updateConnectionStatusUI() {
 
 function renderSelectedQrCode() {
     const point = document.getElementById('qrPointSelect')?.value || 'M-01';
-    const title = document.getElementById('qrCardTitle');
-    const preview = document.getElementById('qrFullUrlPreview');
-    const img = document.getElementById('qrGeneratedImg');
+    const title = document.getElementById('qrCardTitle'); const preview = document.getElementById('qrFullUrlPreview'); const img = document.getElementById('qrGeneratedImg');
     const url = window.location.href.split('?')[0] + `?point=${point}`;
-    if(title) title.innerText = `จุดตรวจประจำจุด: ${point}`;
-    if(preview) preview.innerText = url;
+    if(title) title.innerText = `จุดตรวจประจำจุด: ${point}`; if(preview) preview.innerText = url;
     if(img) img.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(url)}`;
 }
 
 function downloadQrImage() {
-    const img = document.getElementById('qrGeneratedImg');
-    if(!img) return;
-    const a = document.createElement('a');
-    a.href = img.src;
-    a.download = `QR_Code_MaeAi.png`;
-    a.target = '_blank';
-    a.click();
-    showToast('ดาวน์โหลดรูป QR สำเร็จ');
+    const img = document.getElementById('qrGeneratedImg'); if(!img) return;
+    const a = document.createElement('a'); a.href = img.src; a.download = `QR_Code_MaeAi.png`; a.target = '_blank'; a.click(); showToast('ดาวน์โหลดรูป QR สำเร็จ');
 }
 
 function updateTs2Report() {
-    const sel = document.getElementById('ts2MonthSelect');
-    const txt = sel ? sel.options[sel.selectedIndex].text : 'ตุลาคม 2569';
-    const header = document.getElementById('ts2HeaderMonth');
-    if(header) header.innerText = txt;
+    const sel = document.getElementById('ts2MonthSelect'); const txt = sel ? sel.options[sel.selectedIndex].text : 'ตุลาคม 2569';
+    const header = document.getElementById('ts2HeaderMonth'); if(header) header.innerText = txt;
 }
 
 function copyFullTs2Text() {
     const text = `[รายงาน ทส.2 กรมควบคุมมลพิษ - โรงพยาบาลแม่อาย] ประจำเดือน\n1. ชื่อสถานบริการ: โรงพยาบาลแม่อาย (ประเภท ก)\n2. สรุปปริมาณน้ำใช้: 4,275.0 ลบ.ม.\n3. ชั่วโมงปั๊มสูบรวม: 195.0 ชม.\n4. น้ำเสียเข้าระบบรวม: 3,115.1 ลบ.ม.\n5. ไฟฟ้าบำบัด: 1,440.0 หน่วย`;
-    const temp = document.createElement('textarea');
-    temp.value = text;
-    document.body.appendChild(temp);
-    temp.select();
-    document.execCommand('copy');
-    document.body.removeChild(temp);
-    showToast('คัดลอกสรุป ทส.2 เรียบร้อย');
+    const temp = document.createElement('textarea'); temp.value = text; document.body.appendChild(temp); temp.select(); document.execCommand('copy'); document.body.removeChild(temp); showToast('คัดลอกสรุป ทส.2 เรียบร้อย');
 }
 
 function initCharts() {
