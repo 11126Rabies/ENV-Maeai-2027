@@ -1877,6 +1877,8 @@ function calcWasteTotal() {
 function handleWaterSubmit(e) {
     e.preventDefault();
     const curr = document.getElementById('waterCurrent').value;
+    const prev = document.getElementById('waterPrev').value;
+    const usage = (parseFloat(curr) - parseFloat(prev)).toFixed(1);
     const timeVal = document.getElementById('waterTime')?.value || '08:30';
     addHistoryRow({
         date: document.getElementById('waterDate').value + ' ' + timeVal,
@@ -1885,21 +1887,32 @@ function handleWaterSubmit(e) {
         value: `ใช้น้ำ ${curr} ลบ.ม. (จุดตรวจ: ${document.getElementById('waterTestPoint').value})`,
         status: 'ผ่านเกณฑ์',
         recorder: 'นายจีรศักดิ์ นวลดี',
-        images: [...uploadedImagesState.water]
+        images: [...uploadedImagesState.water],
+        raw: {
+            currentMeter: curr,
+            waterUsage: usage,
+            chlorine: document.getElementById('waterChlorine').value,
+            ph: document.getElementById('waterPh').value,
+            testPoint: document.getElementById('waterTestPoint').value,
+            alum: '',
+            chlorineAdd: ''
+        }
     });
     
     if(document.getElementById('chkAlum')?.checked) {
         addHistoryRow({
             date: document.getElementById('dateAlum').value,
             cat: 'ระบบประปา', point: 'เติมสารส้ม', value: `ปริมาณ ${document.getElementById('valAlum').value} กก.`,
-            status: 'เสร็จสิ้น', recorder: 'นายจีรศักดิ์ นวลดี', images: []
+            status: 'เสร็จสิ้น', recorder: 'นายจีรศักดิ์ นวลดี', images: [],
+            raw: { currentMeter: '', waterUsage: '', chlorine: '', ph: '', testPoint: '', alum: document.getElementById('valAlum').value, chlorineAdd: '' }
         });
     }
     if(document.getElementById('chkChlorineWater')?.checked) {
         addHistoryRow({
             date: document.getElementById('dateChlorineWater').value,
             cat: 'ระบบประปา', point: 'เติมคลอรีน', value: `ปริมาณ ${document.getElementById('valChlorineWater').value} ลิตร/กก.`,
-            status: 'เสร็จสิ้น', recorder: 'นายจีรศักดิ์ นวลดี', images: []
+            status: 'เสร็จสิ้น', recorder: 'นายจีรศักดิ์ นวลดี', images: [],
+            raw: { currentMeter: '', waterUsage: '', chlorine: '', ph: '', testPoint: '', alum: '', chlorineAdd: document.getElementById('valChlorineWater').value }
         });
     }
 
@@ -1911,6 +1924,7 @@ function handleWaterSubmit(e) {
 function handleWwtsSubmit(e) {
     e.preventDefault();
     const pumpCalc = calculateWwtsInflow();
+    const elecUsage = calculateWwtsElectricity();
     const doVal = document.getElementById('wwtsDo').value;
     addHistoryRow({
         date: document.getElementById('wwtsDate').value,
@@ -1919,14 +1933,26 @@ function handleWwtsSubmit(e) {
         value: `สูบ ${pumpCalc.inflowM3} ลบ.ม. DO:${doVal}`,
         status: 'ผ่านเกณฑ์',
         recorder: 'นายจีรศักดิ์ นวลดี',
-        images: [...uploadedImagesState.wwts]
+        images: [...uploadedImagesState.wwts],
+        raw: {
+            pumpMeter: document.getElementById('wwtsPumpToday').value,
+            inflow: pumpCalc.inflowM3,
+            elecMeter: document.getElementById('wwtsElectricToday').value,
+            elecUsage: elecUsage,
+            do: doVal,
+            sv30: document.getElementById('wwtsSv30').value,
+            ph: document.getElementById('wwtsPh').value,
+            clEffluent: document.getElementById('wwtsChlorineEffluent').value,
+            clAdd: ''
+        }
     });
 
     if(document.getElementById('chkChlorineWwts')?.checked) {
         addHistoryRow({
             date: document.getElementById('dateChlorineWwts').value,
             cat: 'น้ำเสีย', point: 'เติมคลอรีนฆ่าเชื้อ', value: `ปริมาณ ${document.getElementById('valChlorineWwts').value} ลิตร/กก.`,
-            status: 'เสร็จสิ้น', recorder: 'นายจีรศักดิ์ นวลดี', images: []
+            status: 'เสร็จสิ้น', recorder: 'นายจีรศักดิ์ นวลดี', images: [],
+            raw: { pumpMeter: '', inflow: '', elecMeter: '', elecUsage: '', do: '', sv30: '', ph: '', clEffluent: '', clAdd: document.getElementById('valChlorineWwts').value }
         });
     }
 
@@ -1946,35 +1972,44 @@ function handleWasteSubmit(e) {
         value: `ทั่วไป/อินทรีย์/อันตราย รวม ${(wCalc.g + wCalc.o + wCalc.haz).toFixed(1)} กก.`,
         status: 'เสร็จสิ้น',
         recorder: 'นายจีรศักดิ์ นวลดี',
-        images: [...uploadedImagesState.waste]
+        images: [...uploadedImagesState.waste],
+        raw: {
+            temp: document.getElementById('wasteTemp').value,
+            general: wCalc.g, organic: wCalc.o, haz: wCalc.haz,
+            recycle: '', recycleInc: '', infGen: '', infHaz: '', extSource: '', extGen: '', extHaz: '', total: wCalc.grandTotal
+        }
     });
 
     if(document.getElementById('chkRecycle')?.checked) {
         addHistoryRow({
             date: document.getElementById('dateRecycle').value,
             cat: 'จัดการขยะ', point: 'จำหน่ายรีไซเคิล', value: `${document.getElementById('valRecycle').value} กก. (รายได้ ${document.getElementById('incomeRecycle').value} บ.)`,
-            status: 'ขายเข้ากองทุน', recorder: 'นายจีรศักดิ์ นวลดี', images: []
+            status: 'ขายเข้ากองทุน', recorder: 'นายจีรศักดิ์ นวลดี', images: [],
+            raw: { temp: '', general: '', organic: '', haz: '', recycle: document.getElementById('valRecycle').value, recycleInc: document.getElementById('incomeRecycle').value, infGen: '', infHaz: '', extSource: '', extGen: '', extHaz: '', total: '' }
         });
     }
     if(document.getElementById('chkInfGen')?.checked) {
         addHistoryRow({
             date: document.getElementById('dateInfGen').value,
             cat: 'จัดการขยะ', point: 'ติดเชื้อทั่วไป รพ.', value: `${document.getElementById('valInfGen').value} กก.`,
-            status: 'รอส่งกำจัด', recorder: 'นายจีรศักดิ์ นวลดี', images: []
+            status: 'รอส่งกำจัด', recorder: 'นายจีรศักดิ์ นวลดี', images: [],
+            raw: { temp: '', general: '', organic: '', haz: '', recycle: '', recycleInc: '', infGen: document.getElementById('valInfGen').value, infHaz: '', extSource: '', extGen: '', extHaz: '', total: '' }
         });
     }
     if(document.getElementById('chkInfHaz')?.checked) {
         addHistoryRow({
             date: document.getElementById('dateInfHaz').value,
             cat: 'จัดการขยะ', point: 'ติดเชื้ออันตราย/มีคม รพ.', value: `${document.getElementById('valInfHaz').value} กก.`,
-            status: 'รอส่งกำจัด', recorder: 'นายจีรศักดิ์ นวลดี', images: []
+            status: 'รอส่งกำจัด', recorder: 'นายจีรศักดิ์ นวลดี', images: [],
+            raw: { temp: '', general: '', organic: '', haz: '', recycle: '', recycleInc: '', infGen: '', infHaz: document.getElementById('valInfHaz').value, extSource: '', extGen: '', extHaz: '', total: '' }
         });
     }
     if(document.getElementById('chkExtInf')?.checked) {
         addHistoryRow({
             date: document.getElementById('dateExtInf').value,
             cat: 'จัดการขยะ', point: `รับฝากจาก ${document.getElementById('sourceExtInf').value}`, value: `${wCalc.extInfTotal} กก.`,
-            status: 'รับฝาก', recorder: 'นายจีรศักดิ์ นวลดี', images: []
+            status: 'รับฝาก', recorder: 'นายจีรศักดิ์ นวลดี', images: [],
+            raw: { temp: '', general: '', organic: '', haz: '', recycle: '', recycleInc: '', infGen: '', infHaz: '', extSource: document.getElementById('sourceExtInf').value, extGen: document.getElementById('valExtInfGen').value, extHaz: document.getElementById('valExtInfHaz').value, total: '' }
         });
     }
 
@@ -1985,7 +2020,8 @@ function handleWasteSubmit(e) {
 
 function handleSafetySubmit(e) {
     e.preventDefault();
-    const type = document.getElementById('safetyType').value || 'ไม่มีอุบัติการณ์';
+    const typeSelect = document.getElementById('safetyType').value;
+    const type = typeSelect === 'custom' ? document.getElementById('safetyCustomInput')?.value : typeSelect;
     const dept = document.getElementById('safetyDept').value || '-';
     const role = document.getElementById('safetyRole').value || '-';
     const detail = document.getElementById('safetyDetail').value || '-';
@@ -1995,20 +2031,19 @@ function handleSafetySubmit(e) {
         cat: 'ความปลอดภัย',
         point: `${dept} (ผู้รายงาน: ${role})`,
         value: `หมวดหมู่: ${type} | รายละเอียด: ${detail}`,
-        status: type.includes('ไม่มี') ? 'ปลอดภัย' : 'เฝ้าระวัง',
+        status: (type && type.includes('ไม่มี')) ? 'ปลอดภัย' : 'เฝ้าระวัง',
         recorder: role,
-        images: [...uploadedImagesState.safety]
+        images: [...uploadedImagesState.safety],
+        raw: { type: type, dept: dept, role: role, detail: detail }
     });
     uploadedImagesState.safety = [];
     renderImageThumbnails('safety', 'safetyImgPreview');
 
-    if (!type.includes('ไม่มีอุบัติการณ์') && !type.includes('Zero')) {
+    if (type && !type.includes('ไม่มีอุบัติการณ์') && !type.includes('Zero')) {
         const kpiAcc = document.getElementById('kpiAccident');
         if (kpiAcc) kpiAcc.innerText = parseInt(kpiAcc.innerText || '0') + 1;
     }
     showToast('ส่งรายงานอุบัติการณ์ด้านสิ่งแวดล้อมเรียบร้อยแล้ว');
-    e.target.reset();
-    document.getElementById('safetyDate').value = new Date().toISOString().split('T')[0];
 }
 
 function handleMaintenanceSubmit(e) {
@@ -2020,7 +2055,13 @@ function handleMaintenanceSubmit(e) {
         value: document.getElementById('maintAction').value,
         status: 'เสร็จสิ้น',
         recorder: 'นายจีรศักดิ์ นวลดี',
-        images: [...uploadedImagesState.maint]
+        images: [...uploadedImagesState.maint],
+        raw: { 
+            cat: document.getElementById('maintCategory').value,
+            item: document.getElementById('maintItem').value,
+            prob: document.getElementById('maintProblem').value,
+            action: document.getElementById('maintAction').value
+        }
     });
     uploadedImagesState.maint = [];
     renderImageThumbnails('maint', 'maintImgPreview');
@@ -2058,7 +2099,8 @@ function handleLabSubmit(e) {
         value: valStr,
         status: status,
         recorder: 'นายจีรศักดิ์ นวลดี',
-        images: [...uploadedImagesState.lab]
+        images: [...uploadedImagesState.lab],
+        raw: { reportNo: rpt, type: point, valStr: valStr }
     });
 
     uploadedImagesState.lab = [];
@@ -2069,22 +2111,22 @@ function handleLabSubmit(e) {
 function handleHasSubmit(e) {
     e.preventDefault();
     let failCount = 0;
-    let failedItems = [];
     for(let i=1; i<=16; i++) {
         const radios = document.getElementsByName(`has_${i}`);
         let passed = true;
         for(let r of radios) { if(r.value === 'fail' && r.checked) passed = false; }
-        if(!passed) { failCount++; failedItems.push(i); }
+        if(!passed) failCount++;
     }
     
     addHistoryRow({
         date: document.getElementById('hasDate').value,
         cat: 'HAS ส้วมสาธารณะ',
         point: document.getElementById('hasLocation').value,
-        value: `ห้องส้วม ${document.getElementById('hasToilets').value} ที่, อ่างล้างมือ ${document.getElementById('hasSinks').value} ที่`,
+        value: `ห้องส้วม ${document.getElementById('hasToilets').value} ที่, ไม่ผ่าน ${failCount} ข้อ`,
         status: failCount === 0 ? 'ผ่านเกณฑ์' : 'ต้องปรับปรุง',
         recorder: document.getElementById('hasInspector').value,
-        images: [...uploadedImagesState.has]
+        images: [...uploadedImagesState.has],
+        raw: { loc: document.getElementById('hasLocation').value, failCount: failCount, toilets: document.getElementById('hasToilets').value }
     });
     uploadedImagesState.has = [];
     renderImageThumbnails('has', 'hasImgPreview');
@@ -2098,19 +2140,19 @@ function handleA11Submit(e) {
         date: document.getElementById('a11Date').value,
         cat: 'คุณภาพตู้น้ำดื่ม อ.11',
         point: document.getElementById('a11Location').value,
-        value: `ผลการตรวจ: ${result} | หมายเหตุ: ${document.getElementById('a11Note').value}`,
-        status: result.includes('ไม่พบเชื้อ') ? 'ผ่านเกณฑ์' : 'เฝ้าระวัง (พบเชื้อ)',
+        value: `ผล: ${result} | หมายเหตุ: ${document.getElementById('a11Note').value}`,
+        status: result.includes('ไม่พบเชื้อ') ? 'ผ่านเกณฑ์' : 'เฝ้าระวัง',
         recorder: document.getElementById('a11Inspector').value,
-        images: [...uploadedImagesState.a11]
+        images: [...uploadedImagesState.a11],
+        raw: { loc: document.getElementById('a11Location').value, result: result, note: document.getElementById('a11Note').value }
     });
     uploadedImagesState.a11 = [];
     renderImageThumbnails('a11', 'a11ImgPreview');
     showToast('บันทึกแบบตรวจ อ.11 เรียบร้อย');
-    if(result.includes('พบเชื้อ')) {
-        setTimeout(() => alert('⚠️ ตรวจพบเชื้อ! กรุณาระงับการให้บริการและล้างทำความสะอาดตู้ตามคู่มือทันที'), 500);
-    }
 }
 
+// ----------------------------------------------------
+// ระบบ Cloud Sync (อัปเดตสำหรับ Multi-Sheet)
 // ----------------------------------------------------
 // ระบบ Cloud Sync & API Functions
 // ----------------------------------------------------
